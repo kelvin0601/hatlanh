@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { articles, getArticleBySlug } from "@/lib/articles";
@@ -89,11 +90,15 @@ export default async function ArticleDetailPage({
               </h1>
             </header>
 
-            <div className="aspect-[16/9] rounded-2xl bg-sand flex items-center justify-center mb-10">
-              <div className="text-center p-8">
-                <span className="text-3xl">📝</span>
-                <p className="text-sm text-muted mt-2">Ảnh minh họa bài viết</p>
-              </div>
+            <div className="relative aspect-[16/9] overflow-hidden rounded-2xl bg-sand mb-10">
+              <Image
+                src={article.image}
+                alt={article.imageAlt}
+                fill
+                sizes="(max-width: 768px) 100vw, 768px"
+                className="object-cover"
+                priority
+              />
             </div>
 
             <div className="prose-hatlanh">

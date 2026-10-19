@@ -1,11 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
 import { articles } from "@/lib/articles";
-
-const articleGradients: Record<string, string> = {
-  "bua-sang-lanh-manh-voi-ngu-coc": "linear-gradient(140deg, #F8F4EA 0%, #EDE4D5 30%, #C69A62 70%, #a07840 100%)",
-  "cach-bao-quan-ngu-coc": "linear-gradient(140deg, #d8e0c8 0%, #b0c098 30%, #798B6C 70%, #506050 100%)",
-  "5-cong-thuc-ngu-coc-don-gian": "linear-gradient(140deg, #EDE4D5 0%, #c4a880 30%, #25452F 75%, #1a3020 100%)",
-};
 
 export function JournalSection() {
   return (
@@ -48,20 +43,13 @@ export function JournalSection() {
               className="group bg-paper rounded-[14px] overflow-hidden hover:shadow-[var(--shadow-soft)] transition-shadow"
             >
               <div className="aspect-[16/9] overflow-hidden relative">
-                <div
-                  className="w-full h-full transition-transform duration-[400ms] group-hover:scale-[1.03]"
-                  style={{
-                    background: articleGradients[article.slug] ?? "linear-gradient(140deg, #EDE4D5 0%, #C69A62 50%, #25452F 100%)",
-                  }}
-                >
-                  {/* Subtle shimmer highlight */}
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background: "radial-gradient(circle at 30% 35%, rgba(255,255,255,0.2) 0%, transparent 50%)",
-                    }}
-                  />
-                </div>
+                <Image
+                  src={article.image}
+                  alt={article.imageAlt}
+                  fill
+                  sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
+                  className="object-cover transition-transform duration-[400ms] group-hover:scale-[1.04]"
+                />
               </div>
               <div className="p-4 md:p-5 flex flex-col gap-2.5">
                 <div className="flex items-center gap-3 text-[13px]">

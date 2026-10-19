@@ -1,14 +1,15 @@
-import Link from "next/link";
+import Image from "next/image";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 
 const ingredients = [
-  { name: "Yến mạch", desc: "Giàu chất xơ", color: "#e8c98a" },
-  { name: "Đậu đỏ", desc: "Bổ sung đạm thực vật", color: "#c47a6a" },
-  { name: "Hạt chia", desc: "Giàu omega-3", color: "#8a9a7a" },
-  { name: "Hạnh nhân", desc: "Giàu vitamin E", color: "#dcc49a" },
-  { name: "Đậu xanh", desc: "Thanh mát, dễ tiêu", color: "#8ab480" },
-  { name: "Gạo lứt", desc: "Giàu khoáng chất", color: "#c8aa80" },
-  { name: "Mè đen", desc: "Tốt cho tim mạch", color: "#5a6a50" },
-  { name: "Hạt bí", desc: "Giàu kẽm", color: "#a0a860" },
+  { name: "Yến mạch", desc: "Giàu chất xơ", image: "/images/02_ingredients/oats.jpg" },
+  { name: "Đậu đỏ", desc: "Bổ sung đạm thực vật", image: "/images/02_ingredients/red-beans.jpg" },
+  { name: "Hạt chia", desc: "Giàu omega-3", image: "/images/02_ingredients/chia.jpg" },
+  { name: "Hạnh nhân", desc: "Giàu vitamin E", image: "/images/02_ingredients/almonds.jpg" },
+  { name: "Hạt điều", desc: "Giàu chất béo tốt", image: "/images/02_ingredients/cashews.jpg" },
+  { name: "Hạt hướng dương", desc: "Giàu vitamin B", image: "/images/02_ingredients/sunflower-seeds.jpg" },
+  { name: "Óc chó", desc: "Tốt cho tim mạch", image: "/images/02_ingredients/walnuts.jpg" },
+  { name: "Hạt bí", desc: "Giàu kẽm", image: "/images/02_ingredients/pumpkin-seeds.jpg" },
 ];
 
 export function IngredientsSection() {
@@ -40,27 +41,28 @@ export function IngredientsSection() {
               Khi kết hợp lại, chúng tạo nên nguồn dinh dưỡng tự nhiên, hài hòa
               và tốt lành cho cơ thể.
             </p>
-            <Link
+            <ButtonLink
               href="/tu-nong-trai"
-              className="inline-flex items-center justify-center gap-2 text-forest font-semibold text-[15px] h-[48px] px-6 rounded-full border border-forest/30 hover:bg-forest/5 transition-colors"
+              variant="outline-dark"
+              withArrow
             >
               Khám phá nguyên liệu
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </Link>
+            </ButtonLink>
           </div>
 
           {/* Right: 2 rows of 4 circular ingredients */}
           <div className="grid grid-cols-4 gap-x-6 gap-y-8 md:gap-x-10 md:gap-y-10">
             {ingredients.map((item) => (
               <div key={item.name} className="flex flex-col items-center text-center gap-2.5">
-                <div
-                  className="w-16 h-16 md:w-[84px] md:h-[84px] lg:w-[96px] lg:h-[96px] rounded-full shadow-sm"
-                  style={{
-                    background: `radial-gradient(circle at 40% 35%, ${item.color}dd 0%, ${item.color} 60%, ${item.color}99 100%)`,
-                  }}
-                />
+                <div className="relative w-16 h-16 md:w-[84px] md:h-[84px] lg:w-[96px] lg:h-[96px] rounded-full overflow-hidden bg-paper shadow-sm ring-1 ring-forest/5">
+                  <Image
+                    src={item.image}
+                    alt={item.name}
+                    fill
+                    sizes="(max-width: 767px) 64px, (max-width: 1023px) 84px, 96px"
+                    className="object-cover object-top scale-[1.18] origin-top"
+                  />
+                </div>
                 <div>
                   <p className="text-ink font-semibold text-[14px] md:text-[15px] leading-tight">
                     {item.name}

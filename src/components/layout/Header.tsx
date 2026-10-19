@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ShoppingBag, Menu, X, Search, User } from "lucide-react";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 
 const navLinks = [
   { href: "/", label: "Trang chủ" },
@@ -29,13 +30,13 @@ export function Header() {
         <div className="flex items-center gap-3">
           <button
             aria-label={menuOpen ? "Đóng menu" : "Mở menu"}
-            className="md:hidden w-10 h-10 flex items-center justify-center rounded-full hover:bg-sand/60 transition-colors"
+            className="group md:hidden w-10 h-10 flex items-center justify-center rounded-full text-ink hover:bg-forest hover:text-white hover:-translate-y-0.5 hover:shadow-md active:scale-90 transition-all duration-300"
             onClick={() => setMenuOpen(!menuOpen)}
           >
             {menuOpen ? (
-              <X className="w-5 h-5 text-ink" />
+              <X className="w-5 h-5 transition-transform duration-300 group-hover:rotate-90" />
             ) : (
-              <Menu className="w-5 h-5 text-ink" />
+              <Menu className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
             )}
           </button>
 
@@ -89,37 +90,36 @@ export function Header() {
         <div className="flex items-center gap-1 md:gap-2">
           <button
             aria-label="Tìm kiếm"
-            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-sand/60 transition-colors"
+            className="group w-10 h-10 flex items-center justify-center rounded-full text-ink hover:bg-forest hover:text-white hover:-translate-y-0.5 hover:shadow-md active:scale-90 transition-all duration-300"
           >
-            <Search className="w-[18px] h-[18px] text-ink" />
+            <Search className="w-[18px] h-[18px] transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-8deg]" />
           </button>
 
           <button
             aria-label="Tài khoản"
-            className="hidden md:flex w-10 h-10 items-center justify-center rounded-full hover:bg-sand/60 transition-colors"
+            className="group hidden md:flex w-10 h-10 items-center justify-center rounded-full text-ink hover:bg-forest hover:text-white hover:-translate-y-0.5 hover:shadow-md active:scale-90 transition-all duration-300"
           >
-            <User className="w-[18px] h-[18px] text-ink" />
+            <User className="w-[18px] h-[18px] transition-transform duration-300 group-hover:scale-110" />
           </button>
 
           <button
             aria-label="Giỏ hàng"
-            className="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-sand/60 transition-colors"
+            className="group relative w-10 h-10 flex items-center justify-center rounded-full text-ink hover:bg-forest hover:text-white hover:-translate-y-0.5 hover:shadow-md active:scale-90 transition-all duration-300"
           >
-            <ShoppingBag className="w-[18px] h-[18px] text-ink" />
-            <span className="absolute top-0.5 right-0.5 w-[18px] h-[18px] bg-forest text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+            <ShoppingBag className="w-[18px] h-[18px] transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-8deg]" />
+            <span className="absolute top-0.5 right-0.5 w-[18px] h-[18px] bg-forest text-white text-[10px] font-bold rounded-full flex items-center justify-center ring-2 ring-cream transition-transform duration-300 group-hover:scale-110 group-hover:bg-wheat">
               0
             </span>
           </button>
 
-          <Link
+          <ButtonLink
             href="/san-pham"
-            className="hidden lg:inline-flex items-center justify-center gap-1.5 bg-forest hover:bg-forest-hover text-white font-semibold text-[13px] h-9 px-5 rounded-full transition-colors ml-2"
+            size="sm"
+            withArrow
+            className="hidden lg:inline-flex ml-2"
           >
             Mua ngay
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="ml-0.5">
-              <path d="M5.25 3.5L8.75 7L5.25 10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </Link>
+          </ButtonLink>
         </div>
       </div>
 
@@ -146,13 +146,15 @@ export function Header() {
                 </Link>
               ))}
 
-              <Link
+              <ButtonLink
                 href="/san-pham"
-                className="mt-6 flex items-center justify-center gap-2 bg-forest hover:bg-forest-hover text-white font-semibold text-base h-[52px] rounded-full transition-colors"
+                size="lg"
+                withArrow
+                className="mt-6 w-full"
                 onClick={() => setMenuOpen(false)}
               >
                 Mua ngay
-              </Link>
+              </ButtonLink>
             </div>
           </nav>
         </div>

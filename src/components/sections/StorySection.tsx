@@ -1,22 +1,24 @@
-import Link from "next/link";
+import Image from "next/image";
 import { Play } from "lucide-react";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 
 export function StorySection() {
   return (
     <section className="relative overflow-hidden" style={{ minHeight: "480px" }}>
       {/* Full-width countryside background */}
       <div className="absolute inset-0">
-        <div
-          className="w-full h-full bg-cover bg-center"
-          style={{
-            background: "linear-gradient(135deg, #25452F 0%, #3a6040 25%, #798B6C 50%, #C69A62 75%, #a07840 100%)",
-          }}
+        <Image
+          src="/images/03_story/farmer-banner-hd.jpg"
+          alt="Người nông dân giữa vùng nguyên liệu xanh"
+          fill
+          sizes="100vw"
+          className="object-cover object-center"
         />
         {/* Dark gradient left for text */}
         <div
           className="absolute inset-0"
           style={{
-            background: "linear-gradient(to right, rgba(33,55,40,0.88) 0%, rgba(33,55,40,0.65) 35%, rgba(33,55,40,0.2) 60%, transparent 80%)",
+            background: "linear-gradient(to right, rgba(20,43,27,0.92) 0%, rgba(20,43,27,0.68) 38%, rgba(20,43,27,0.2) 66%, transparent 88%)",
           }}
         />
       </div>
@@ -29,7 +31,7 @@ export function StorySection() {
         }}
       >
         <div className="max-w-[480px]">
-          <p className="text-sage/80 text-[12px] font-semibold uppercase tracking-[0.14em] mb-4">
+          <p className="text-white/75 text-[12px] font-semibold uppercase tracking-[0.14em] mb-4">
             Câu chuyện Hạt Lành
           </p>
           <h2
@@ -37,6 +39,7 @@ export function StorySection() {
             style={{
               fontFamily: "var(--font-display)",
               fontSize: "clamp(1.875rem, 4vw, 3.5rem)",
+              color: "white",
             }}
           >
             Từ những
@@ -45,19 +48,17 @@ export function StorySection() {
             <br />
             bình dị
           </h2>
-          <p className="text-white/75 text-[16px] md:text-[17px] leading-[1.7] mb-8 max-w-[400px]">
+          <p className="text-white/90 text-[16px] md:text-[17px] leading-[1.7] mb-8 max-w-[400px]">
             Chúng tôi tin rằng mỗi hạt ngũ cốc đều mang trong mình tinh túy của đất trời,
             sự chăm chút của người nông dân và giá trị của một lối sống lành mạnh, gần gũi.
           </p>
-          <Link
+          <ButtonLink
             href="/cau-chuyen"
-            className="inline-flex items-center justify-center gap-2 text-white font-semibold text-[15px] h-[48px] px-6 rounded-full border border-white/30 hover:bg-white/10 transition-colors"
+            variant="light"
+            withArrow
           >
             Xem câu chuyện
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </Link>
+          </ButtonLink>
         </div>
 
         {/* Decorative script text — right side (desktop only) */}

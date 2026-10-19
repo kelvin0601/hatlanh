@@ -68,8 +68,7 @@ body {
   line-height: 1.65;
 }
 
-h1, h2, h3, h4 {
-  color: var(--color-ink);
+:where(h1, h2, h3, h4) {
   font-family: var(--font-display);
 }
 

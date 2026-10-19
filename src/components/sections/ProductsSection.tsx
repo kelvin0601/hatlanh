@@ -1,8 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { ShoppingBag, Heart, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { products, formatPrice } from "@/lib/products";
+
+const productImages = [
+  "/images/04_products/product-traditional-hd.jpg",
+  "/images/04_products/product-energy-hd.jpg",
+  "/images/04_products/product-nutrition-hd.jpg",
+  "/images/04_products/product-family-hd.jpg",
+];
 
 export function ProductsSection() {
   return (
@@ -38,11 +46,11 @@ export function ProductsSection() {
               </svg>
             </Link>
             <div className="hidden md:flex items-center gap-2">
-              <button className="w-9 h-9 rounded-full border border-border flex items-center justify-center hover:bg-sand transition-colors" aria-label="Trước">
-                <ChevronLeft className="w-4 h-4 text-ink" />
+              <button className="group/nav w-9 h-9 rounded-full border border-border flex items-center justify-center text-ink hover:border-forest hover:bg-forest hover:text-white hover:-translate-y-0.5 hover:shadow-md active:scale-90 transition-all duration-300" aria-label="Trước">
+                <ChevronLeft className="w-4 h-4 transition-transform duration-300 group-hover/nav:-translate-x-0.5" />
               </button>
-              <button className="w-9 h-9 rounded-full border border-border flex items-center justify-center hover:bg-sand transition-colors" aria-label="Sau">
-                <ChevronRight className="w-4 h-4 text-ink" />
+              <button className="group/nav w-9 h-9 rounded-full border border-border flex items-center justify-center text-ink hover:border-forest hover:bg-forest hover:text-white hover:-translate-y-0.5 hover:shadow-md active:scale-90 transition-all duration-300" aria-label="Sau">
+                <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover/nav:translate-x-0.5" />
               </button>
             </div>
           </div>
@@ -55,24 +63,27 @@ export function ProductsSection() {
               key={product.id}
               className="bg-paper rounded-[14px] overflow-hidden hover:shadow-[var(--shadow-soft)] transition-shadow group"
             >
-              <Link href={`/san-pham/${product.slug}`} className="block relative">
-                <div className="aspect-[4/5] bg-sand overflow-hidden">
-                  <div
-                    className="w-full h-full transition-transform duration-[220ms] group-hover:scale-[1.025]"
-                    style={{
-                      background: `radial-gradient(ellipse at 50% 60%, #EDE4D5 0%, #d4c9b5 50%, #c4b89a 100%)`,
-                    }}
-                  />
-                </div>
+              <div className="relative">
+                <Link href={`/san-pham/${product.slug}`} className="block">
+                  <div className="relative aspect-[4/5] bg-sand overflow-hidden">
+                    <Image
+                      src={productImages[product.id - 1] ?? productImages[0]}
+                      alt={product.name}
+                      fill
+                      sizes="(max-width: 1023px) 50vw, 25vw"
+                      className="object-cover transition-transform duration-[220ms] group-hover:scale-[1.025]"
+                    />
+                  </div>
+                </Link>
                 {/* Wishlist heart */}
                 <button
-                  className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center hover:bg-white transition-colors"
+                  className="group/heart absolute top-3 right-3 w-8 h-8 rounded-full bg-white/85 text-muted backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-forest hover:text-white hover:-translate-y-1 hover:shadow-lg active:scale-90 transition-all duration-300"
                   aria-label="Yêu thích"
                   onClick={(e) => e.preventDefault()}
                 >
-                  <Heart className="w-4 h-4 text-muted" />
+                  <Heart className="w-4 h-4 transition-all duration-300 group-hover/heart:scale-110 group-hover/heart:fill-white" />
                 </button>
-              </Link>
+              </div>
 
               <div className="p-3 md:p-4 flex flex-col gap-1">
                 <Link href={`/san-pham/${product.slug}`}>
@@ -103,10 +114,11 @@ export function ProductsSection() {
                     {formatPrice(product.price)}
                   </span>
                   <button
-                    className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center rounded-full bg-forest hover:bg-forest-hover text-white transition-colors"
+                    className="group/cart relative w-9 h-9 md:w-10 md:h-10 flex items-center justify-center overflow-hidden rounded-full bg-forest text-white shadow-[0_6px_16px_rgba(33,55,40,0.22)] hover:-translate-y-1 hover:bg-forest-hover hover:shadow-[0_10px_24px_rgba(33,55,40,0.34)] active:translate-y-0 active:scale-90 transition-all duration-300"
                     aria-label={`Thêm ${product.name} vào giỏ`}
                   >
-                    <ShoppingBag className="w-4 h-4" />
+                    <span aria-hidden="true" className="absolute inset-0 translate-y-full rounded-full bg-wheat transition-transform duration-300 group-hover/cart:translate-y-0" />
+                    <ShoppingBag className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover/cart:scale-110 group-hover/cart:rotate-[-8deg]" />
                   </button>
                 </div>
               </div>

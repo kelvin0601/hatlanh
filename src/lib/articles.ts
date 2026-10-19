@@ -4,6 +4,8 @@ export interface Article {
   excerpt: string;
   category: string;
   date: string;
+  image: string;
+  imageAlt: string;
   content: string;
 }
 
@@ -14,6 +16,8 @@ export const articles: Article[] = [
     excerpt: "Tìm hiểu cách kết hợp ngũ cốc cùng trái cây và sữa để có bữa sáng dinh dưỡng hoàn hảo.",
     category: "Dinh dưỡng",
     date: "2026-10-15",
+    image: "/images/05_lifestyle/breakfast-banner-hd.jpg",
+    imageAlt: "Bữa sáng ngũ cốc với trái cây trong ánh nắng sớm",
     content: `Một bữa sáng lành mạnh không cần cầu kỳ. Chỉ cần một tô ngũ cốc ấm, thêm chút trái cây tươi và sữa, bạn đã có đủ năng lượng cho cả buổi sáng.
 
 ## Tại sao nên ăn ngũ cốc vào buổi sáng?
@@ -36,6 +40,8 @@ Ngũ cốc cung cấp carbohydrate phức hợp, giúp duy trì năng lượng �
     excerpt: "Những mẹo đơn giản giúp ngũ cốc luôn thơm ngon và giữ được chất dinh dưỡng lâu hơn.",
     category: "Mẹo hay",
     date: "2026-10-10",
+    image: "/images/04_products/product-traditional-hd.jpg",
+    imageAlt: "Túi ngũ cốc được bảo quản trong không gian khô ráo",
     content: `Bảo quản ngũ cốc đúng cách giúp giữ được hương vị và chất dinh dưỡng lâu hơn. Dưới đây là những mẹo đơn giản mà hiệu quả.
 
 ## Nguyên tắc cơ bản
@@ -58,6 +64,8 @@ Ngũ cốc Hạt Lành có hạn sử dụng ghi rõ trên bao bì. Sau khi mở
     excerpt: "Không có nhiều thời gian? Thử ngay 5 cách chế biến ngũ cốc nhanh gọn chỉ trong 5 phút.",
     category: "Công thức",
     date: "2026-10-05",
+    image: "/images/04_products/product-nutrition-hd.jpg",
+    imageAlt: "Bát ngũ cốc với quả mọng và các loại hạt",
     content: `Bận rộn không có nghĩa là phải bỏ qua bữa sáng. Với ngũ cốc Hạt Lành, bạn có thể chuẩn bị bữa ăn dinh dưỡng chỉ trong vài phút.
 
 ## 1. Overnight oats

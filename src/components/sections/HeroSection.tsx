@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { Play, ChevronDown, Check } from "lucide-react";
+import { ChevronDown, Check } from "lucide-react";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 
 const trustItems = [
   "100% tự nhiên",
@@ -19,7 +19,7 @@ export function HeroSection() {
           muted
           loop
           playsInline
-          poster="/images/hero-poster.png"
+          poster="/images/01_hero/hero-desktop-clean.png"
           preload="auto"
           className="w-full h-full object-cover"
           aria-hidden="true"
@@ -47,7 +47,7 @@ export function HeroSection() {
       >
         {/* Text — left 40–45% */}
         <div className="max-w-[520px] flex flex-col gap-6">
-          <p className="text-sage font-semibold uppercase tracking-[0.14em] text-[12px] md:text-[13px]">
+          <p className="text-white/75 font-semibold uppercase tracking-[0.14em] text-[12px] md:text-[13px]">
             Nguyên lành hạt
           </p>
 
@@ -56,6 +56,7 @@ export function HeroSection() {
             style={{
               fontFamily: "var(--font-display)",
               fontSize: "clamp(2.375rem, 5.6vw, 5rem)",
+              color: "white",
             }}
           >
             Từ muôn hạt{" "}
@@ -73,31 +74,23 @@ export function HeroSection() {
           </p>
 
           <div className="flex flex-wrap items-center gap-3 mt-1">
-            <Link
+            <ButtonLink
               href="/san-pham"
-              className="inline-flex items-center justify-center gap-2 bg-forest hover:bg-forest-hover text-white font-semibold text-[15px] h-[52px] px-7 rounded-full transition-colors border border-white/10"
+              variant="light"
+              size="lg"
+              withArrow
             >
               Khám phá sản phẩm
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </Link>
-            <Link
+            </ButtonLink>
+            <ButtonLink
               href="/cau-chuyen"
-              className="inline-flex items-center justify-center gap-2 text-white font-medium text-[15px] h-[52px] px-6 rounded-full border border-white/30 hover:bg-white/10 transition-colors"
+              variant="outline-light"
+              size="lg"
             >
               Câu chuyện Hạt Lành
-            </Link>
+            </ButtonLink>
           </div>
         </div>
-
-        {/* Play button — center-right on desktop */}
-        <button
-          className="hidden md:flex absolute top-1/2 right-[30%] -translate-y-1/2 w-16 h-16 rounded-full bg-white/90 backdrop-blur-sm items-center justify-center shadow-lg hover:bg-white hover:scale-105 transition-all"
-          aria-label="Xem video"
-        >
-          <Play className="w-6 h-6 text-forest fill-forest ml-0.5" />
-        </button>
 
         {/* Trust strip — bottom */}
         <div className="mt-auto pt-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
