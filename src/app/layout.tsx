@@ -3,6 +3,8 @@ import { Lora, Be_Vietnam_Pro } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { ShopProvider } from "@/components/commerce/ShopProvider";
+import { CartDrawer } from "@/components/commerce/CartDrawer";
 
 const lora = Lora({
   variable: "--font-display",
@@ -21,7 +23,7 @@ const beVietnamPro = Be_Vietnam_Pro({
 export const metadata: Metadata = {
   title: {
     default: "Hạt Lành — Ngũ cốc thiên nhiên",
-    template: "%s | Hạt Lành",
+    template: "%s | Hạt Lành — Ngũ cốc thiên nhiên",
   },
   description:
     "Gieo hạt lành, dưỡng thân tâm. Ngũ cốc hạt thiên nhiên từ vùng quê Việt Nam.",
@@ -52,9 +54,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${lora.variable} ${beVietnamPro.variable} antialiased`}
     >
       <body className="min-h-dvh flex flex-col">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <ShopProvider>
+          <a href="#main-content" className="fixed left-3 top-3 z-[120] -translate-y-20 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-white focus:translate-y-0">Bỏ qua điều hướng</a>
+          <Header />
+          <CartDrawer />
+          <main id="main-content" className="flex-1">{children}</main>
+          <Footer />
+        </ShopProvider>
       </body>
     </html>
   );

@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Hạt Lành
 
-## Getting Started
+Website bán ngũ cốc thiên nhiên xây dựng bằng Next.js 16, React 19 và Tailwind CSS 4.
 
-First, run the development server:
+## Chạy local
 
 ```bash
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Mở [http://localhost:3000](http://localhost:3000) trên trình duyệt.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Email đơn hàng và liên hệ
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Sao chép `.env.example` thành `.env.local`, sau đó điền:
 
-## Learn More
+```bash
+RESEND_API_KEY=re_xxxxxxxxx
+ORDER_FROM_EMAIL="Hạt Lành <orders@your-verified-domain.com>"
+STORE_NOTIFICATION_EMAIL=hello@your-domain.com
+ADMIN_PASSWORD="change-this-strong-password"
+ADMIN_SESSION_SECRET="generate-a-long-random-secret"
+```
 
-To learn more about Next.js, take a look at the following resources:
+`ORDER_FROM_EMAIL` phải thuộc domain đã xác minh trong Resend. Nếu chưa cấu hình, luồng đặt hàng vẫn chạy ở chế độ demo và UI sẽ báo rõ email chưa được gửi.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Trang quản trị nằm tại `/admin`. Hai biến `ADMIN_PASSWORD` và `ADMIN_SESSION_SECRET` bắt buộc phải được cấu hình trước khi đăng nhập.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Kiểm tra
 
-## Deploy on Vercel
+```bash
+npm run lint
+npx tsc --noEmit
+npm run build
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Luồng thương mại
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Giỏ hàng và các đơn gần đây được lưu trên trình duyệt.
+- API tạo đơn luôn đối chiếu lại sản phẩm và giá ở server.
+- Email khách hàng và email cửa hàng được gửi song song qua Resend.
+- COD và chuyển khoản thủ công đã sẵn sàng. Cổng thanh toán online cần tích hợp thêm nhà cung cấp và webhook theo tài khoản merchant của cửa hàng.
+- Admin có thể thêm, sửa, xóa sản phẩm và bài viết; xem đơn hàng và cập nhật trạng thái.
+- Dữ liệu admin hiện lưu tại `data/store.json`, phù hợp khi chạy local hoặc server có ổ đĩa ghi bền. Khi deploy serverless cần thay lớp `admin-store.ts` bằng PostgreSQL, Supabase hoặc database tương đương.

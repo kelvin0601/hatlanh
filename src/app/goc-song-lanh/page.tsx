@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { articles } from "@/lib/articles";
+import { getStoreArticles } from "@/lib/admin-store";
 
 export const metadata: Metadata = {
-  title: "Góc sống lành — Blog dinh dưỡng và lối sống | Hạt Lành",
+  title: "Góc sống lành — Blog dinh dưỡng và lối sống",
+  keywords: ["blog sống lành", "dinh dưỡng", "công thức ngũ cốc", "lối sống khỏe"],
   description:
     "Kiến thức về ngũ cốc, công thức món ăn lành mạnh và bí quyết sống khỏe mỗi ngày từ Hạt Lành.",
   openGraph: {
@@ -12,9 +13,15 @@ export const metadata: Metadata = {
     description: "Kiến thức ngũ cốc, công thức và bí quyết sống khỏe từ Hạt Lành.",
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Góc sống lành — Blog | Hạt Lành",
+    description: "Kiến thức ngũ cốc, công thức và bí quyết sống khỏe từ Hạt Lành.",
+  },
 };
 
-export default function BlogListPage() {
+export default async function BlogListPage() {
+  const articles = await getStoreArticles();
   return (
     <section className="bg-cream" style={{ paddingBlock: "var(--section-space)" }}>
       <div

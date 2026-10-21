@@ -1,11 +1,11 @@
 import type { MetadataRoute } from "next";
-import { products } from "@/lib/products";
-import { articles } from "@/lib/articles";
 import { policies } from "@/lib/policies";
+import { getStoreArticles, getStoreProducts } from "@/lib/admin-store";
 
 const BASE_URL = "https://hatlanh.vn";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [products, articles] = await Promise.all([getStoreProducts(), getStoreArticles()]);
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE_URL, lastModified: new Date(), changeFrequency: "weekly", priority: 1.0 },
     { url: `${BASE_URL}/san-pham`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.9 },

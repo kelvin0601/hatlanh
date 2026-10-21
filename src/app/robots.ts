@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/thanh-toan", "/dat-hang-thanh-cong", "/tra-cuu-don-hang"],
+        disallow: ["/thanh-toan", "/dat-hang-thanh-cong", "/tra-cuu-don-hang", "/admin", "/api"],
       },
     ],
     sitemap: "https://hatlanh.vn/sitemap.xml",

@@ -1,0 +1,95 @@
+import { calculateOrder, resolveCart, type CheckoutCustomer, type Order, type PaymentMethod } from "@/lib/commerce";
+import { sendOrderEmails } from "@/lib/email";
+import { addOrderToStore, getStoreProducts } from "@/lib/admin-store";
+
+interface OrderRequest {
+  customer?: Partial<CheckoutCustomer>;
+  paymentMethod?: PaymentMethod;
+  cart?: { productId: number; quantity: number }[];
+}
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_PATTERN = /^[0-9+()\s.-]{8,20}$/;
+
+function isValidText(value: unknown, min: number, max: number): value is string {
+  return typeof value === "string" && value.trim().length >= min && value.trim().length <= max;
+}
+
+export async function POST(request: Request) {
+  let body: OrderRequest;
+  try {
+    const parsed = (await request.json()) as unknown;
+    if (typeof parsed !== "object" || parsed === null) throw new Error("Invalid payload");
+    body = parsed as OrderRequest;
+  } catch {
+    return Response.json({ message: "Dữ liệu gửi lên không hợp lệ." }, { status: 400 });
+  }
+
+  const customer = body.customer;
+  if (
+    !customer ||
+    !isValidText(customer.name, 2, 80) ||
+    !isValidText(customer.phone, 8, 20) ||
+    !PHONE_PATTERN.test(customer.phone) ||
+    !isValidText(customer.email, 5, 120) ||
+    !EMAIL_PATTERN.test(customer.email) ||
+    !isValidText(customer.address, 5, 180) ||
+    !isValidText(customer.city, 2, 80) ||
+    (customer.note !== undefined && !isValidText(customer.note, 0, 500))
+  ) {
+    return Response.json({ message: "Vui lòng kiểm tra lại thông tin nhận hàng." }, { status: 422 });
+  }
+
+  if (body.paymentMethod !== "cod" && body.paymentMethod !== "bank") {
+    return Response.json({ message: "Phương thức thanh toán không hợp lệ." }, { status: 422 });
+  }
+
+  if (
+    !Array.isArray(body.cart) ||
+    body.cart.length === 0 ||
+    body.cart.length > 20 ||
+    !body.cart.every(
+      (line) =>
+        typeof line === "object" &&
+        line !== null &&
+        Number.isInteger(line.productId) &&
+        Number.isInteger(line.quantity) &&
+        line.quantity >= 1 &&
+        line.quantity <= 20,
+    ) ||
+    new Set(body.cart.map((line) => line.productId)).size !== body.cart.length
+  ) {
+    return Response.json({ message: "Giỏ hàng không có sản phẩm hợp lệ." }, { status: 422 });
+  }
+
+  const catalog = await getStoreProducts();
+  const items = resolveCart(body.cart, catalog, false);
+  if (items.length !== body.cart.length) {
+    return Response.json({ message: "Một sản phẩm trong giỏ không còn hợp lệ." }, { status: 422 });
+  }
+
+  const totals = calculateOrder(items);
+  const id = `HL${new Date().toISOString().slice(2, 10).replaceAll("-", "")}-${crypto.randomUUID().slice(0, 6).toUpperCase()}`;
+  const order: Order = {
+    id,
+    createdAt: new Date().toISOString(),
+    customer: {
+      name: customer.name.trim(),
+      phone: customer.phone.trim(),
+      email: customer.email.trim().toLowerCase(),
+      address: customer.address.trim(),
+      city: customer.city.trim(),
+      note: customer.note?.trim() ?? "",
+    },
+    paymentMethod: body.paymentMethod,
+    paymentStatus: body.paymentMethod === "cod" ? "pay_on_delivery" : "pending",
+    status: "confirmed",
+    items,
+    ...totals,
+    emailStatus: "not_configured",
+  };
+
+  order.emailStatus = await sendOrderEmails(order);
+  await addOrderToStore(order);
+  return Response.json({ order }, { status: 201 });
+}

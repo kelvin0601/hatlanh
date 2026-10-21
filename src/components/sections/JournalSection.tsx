@@ -1,8 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
-import { articles } from "@/lib/articles";
+import { getStoreArticles } from "@/lib/admin-store";
 
-export function JournalSection() {
+export async function JournalSection() {
+  const articles = await getStoreArticles();
   return (
     <section className="bg-cream" style={{ paddingBlock: "var(--section-space)" }}>
       <div

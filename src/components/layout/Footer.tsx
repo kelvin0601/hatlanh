@@ -71,7 +71,7 @@ function SocialIcon({ label, children }: { label: string; children: React.ReactN
 
 export function Footer() {
   return (
-    <footer className="bg-forest text-white">
+    <footer data-site-footer className="bg-forest text-white">
       <div
         className="mx-auto py-12 md:py-16"
         style={{ width: "min(calc(100% - 2 * var(--page-gutter)), var(--container-max))" }}
@@ -118,7 +118,7 @@ export function Footer() {
         {/* Contact info - inline with last column on desktop */}
         <div className="md:hidden mt-8 flex flex-col gap-3">
           <div className="flex items-center gap-2.5 text-white/60 text-[13px]">
-            <Phone className="w-4 h-4" /> 0123 456 789
+            <Phone className="w-4 h-4" /> 028 7300 0888
           </div>
           <div className="flex items-center gap-2.5 text-white/60 text-[13px]">
             <Mail className="w-4 h-4" /> info@hatlanh.vn

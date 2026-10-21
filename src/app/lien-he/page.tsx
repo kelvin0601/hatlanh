@@ -1,10 +1,33 @@
 "use client";
 
-import { useState } from "react";
-import { Send, Phone, Mail, MapPin } from "lucide-react";
+import { useState, type FormEvent } from "react";
+import { CheckCircle2, LoaderCircle, Send, Phone, Mail, MapPin } from "lucide-react";
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSubmitting(true);
+    setFeedback(null);
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const result = (await response.json()) as { message?: string };
+      if (!response.ok) throw new Error(result.message ?? "Chưa thể gửi lời nhắn.");
+      setFeedback({ type: "success", message: result.message ?? "Hạt Lành đã nhận lời nhắn của bạn." });
+      setForm({ name: "", email: "", phone: "", message: "" });
+    } catch (error) {
+      setFeedback({ type: "error", message: error instanceof Error ? error.message : "Đã có lỗi xảy ra." });
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <>
@@ -29,7 +52,7 @@ export default function ContactPage() {
             <div className="md:col-span-2">
               <form
                 className="bg-paper rounded-2xl p-6 md:p-8 flex flex-col gap-5"
-                onSubmit={(e) => e.preventDefault()}
+                onSubmit={handleSubmit}
               >
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="flex flex-col gap-2">
@@ -38,6 +61,8 @@ export default function ContactPage() {
                       id="name"
                       type="text"
                       required
+                      minLength={2}
+                      maxLength={80}
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
                       className="h-[52px] px-4 rounded-[12px] border border-border bg-cream text-body text-base focus:outline-none focus:border-forest focus:ring-2 focus:ring-forest/20"
@@ -49,6 +74,7 @@ export default function ContactPage() {
                       id="email"
                       type="email"
                       required
+                      maxLength={120}
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
                       className="h-[52px] px-4 rounded-[12px] border border-border bg-cream text-body text-base focus:outline-none focus:border-forest focus:ring-2 focus:ring-forest/20"
@@ -62,6 +88,7 @@ export default function ContactPage() {
                     id="phone"
                     type="tel"
                     value={form.phone}
+                    maxLength={20}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                     className="h-[52px] px-4 rounded-[12px] border border-border bg-cream text-body text-base focus:outline-none focus:border-forest focus:ring-2 focus:ring-forest/20"
                   />
@@ -72,6 +99,8 @@ export default function ContactPage() {
                   <textarea
                     id="message"
                     required
+                    minLength={10}
+                    maxLength={2000}
                     rows={5}
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
@@ -79,12 +108,22 @@ export default function ContactPage() {
                   />
                 </div>
 
+                {feedback ? (
+                  <div
+                    role="status"
+                    className={`flex items-start gap-2 rounded-[12px] border px-4 py-3 text-[14px] ${feedback.type === "success" ? "border-forest/20 bg-forest/5 text-forest" : "border-error/20 bg-error/10 text-error"}`}
+                  >
+                    {feedback.type === "success" ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" /> : null}
+                    {feedback.message}
+                  </div>
+                ) : null}
+
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center gap-2 bg-forest hover:bg-forest-hover text-white font-semibold text-base h-[52px] px-7 rounded-full transition-colors w-full sm:w-fit"
+                  disabled={submitting}
+                  className="inline-flex items-center justify-center gap-2 bg-forest hover:bg-forest-hover text-white font-semibold text-base h-[52px] px-7 rounded-full transition-colors w-full sm:w-fit disabled:cursor-wait disabled:opacity-70"
                 >
-                  Gửi lời nhắn
-                  <Send className="w-4 h-4" />
+                  {submitting ? <><LoaderCircle className="h-4 w-4 animate-spin" /> Đang gửi…</> : <>Gửi lời nhắn <Send className="w-4 h-4" /></>}
                 </button>
               </form>
             </div>
@@ -99,14 +138,14 @@ export default function ContactPage() {
                     <Phone className="w-5 h-5 text-forest mt-0.5" />
                     <div>
                       <p className="text-ink font-medium text-[15px]">Hotline</p>
-                      <p className="text-body text-[15px]">0123 456 789</p>
+                      <a href="tel:+842873000888" className="text-body text-[15px] hover:text-forest">028 7300 0888</a>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <Mail className="w-5 h-5 text-forest mt-0.5" />
                     <div>
                       <p className="text-ink font-medium text-[15px]">Email</p>
-                      <p className="text-body text-[15px]">hello@hatlanh.vn</p>
+                      <a href="mailto:hello@hatlanh.vn" className="text-body text-[15px] hover:text-forest">hello@hatlanh.vn</a>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">

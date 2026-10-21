@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ShoppingBag, Menu, X, Search, User } from "lucide-react";
+import { ShoppingBag, Menu, X, Search } from "lucide-react";
 import { ButtonLink } from "@/components/ui/ButtonLink";
+import { useShop } from "@/components/commerce/ShopProvider";
 
 const navLinks = [
   { href: "/", label: "Trang chủ" },
@@ -16,9 +17,10 @@ const navLinks = [
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { cartCount, hydrated, openCart } = useShop();
 
   return (
-    <header className="sticky top-0 z-50 bg-cream/90 backdrop-blur-md border-b border-border/60">
+    <header data-site-header className="sticky top-0 z-50 bg-cream/90 backdrop-blur-md border-b border-border/60">
       <div
         className="mx-auto flex items-center justify-between"
         style={{
@@ -30,7 +32,7 @@ export function Header() {
         <div className="flex items-center gap-3">
           <button
             aria-label={menuOpen ? "Đóng menu" : "Mở menu"}
-            className="group md:hidden w-10 h-10 flex items-center justify-center rounded-full text-ink hover:bg-forest hover:text-white hover:-translate-y-0.5 hover:shadow-md active:scale-90 transition-all duration-300"
+            className="group flex h-11 w-11 items-center justify-center rounded-full text-ink transition-[color,background-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:bg-forest hover:text-white hover:shadow-md active:scale-90 md:hidden"
             onClick={() => setMenuOpen(!menuOpen)}
           >
             {menuOpen ? (
@@ -88,27 +90,24 @@ export function Header() {
 
         {/* Right: Actions */}
         <div className="flex items-center gap-1 md:gap-2">
-          <button
-            aria-label="Tìm kiếm"
-            className="group w-10 h-10 flex items-center justify-center rounded-full text-ink hover:bg-forest hover:text-white hover:-translate-y-0.5 hover:shadow-md active:scale-90 transition-all duration-300"
+          <Link
+            href="/san-pham"
+            aria-label="Tìm sản phẩm"
+            className="group flex h-11 w-11 items-center justify-center rounded-full text-ink transition-[color,background-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:bg-forest hover:text-white hover:shadow-md active:scale-90"
           >
             <Search className="w-[18px] h-[18px] transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-8deg]" />
-          </button>
+          </Link>
 
           <button
-            aria-label="Tài khoản"
-            className="group hidden md:flex w-10 h-10 items-center justify-center rounded-full text-ink hover:bg-forest hover:text-white hover:-translate-y-0.5 hover:shadow-md active:scale-90 transition-all duration-300"
-          >
-            <User className="w-[18px] h-[18px] transition-transform duration-300 group-hover:scale-110" />
-          </button>
-
-          <button
+            type="button"
+            onClick={openCart}
             aria-label="Giỏ hàng"
-            className="group relative w-10 h-10 flex items-center justify-center rounded-full text-ink hover:bg-forest hover:text-white hover:-translate-y-0.5 hover:shadow-md active:scale-90 transition-all duration-300"
+            aria-haspopup="dialog"
+            className="group relative flex h-11 w-11 items-center justify-center rounded-full text-ink transition-[color,background-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:bg-forest hover:text-white hover:shadow-md active:scale-90"
           >
             <ShoppingBag className="w-[18px] h-[18px] transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-8deg]" />
             <span className="absolute top-0.5 right-0.5 w-[18px] h-[18px] bg-forest text-white text-[10px] font-bold rounded-full flex items-center justify-center ring-2 ring-cream transition-transform duration-300 group-hover:scale-110 group-hover:bg-wheat">
-              0
+              {hydrated ? Math.min(cartCount, 99) : 0}
             </span>
           </button>
 

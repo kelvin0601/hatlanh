@@ -3,7 +3,18 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { articles, getArticleBySlug } from "@/lib/articles";
+import { articles } from "@/lib/articles";
+import { getStoreArticleBySlug } from "@/lib/admin-store";
+
+function InlineMarkdown({ text }: { text: string }) {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, index) =>
+    part.startsWith("**") && part.endsWith("**") ? (
+      <strong key={index} className="font-semibold text-ink">{part.slice(2, -2)}</strong>
+    ) : (
+      <span key={index}>{part}</span>
+    ),
+  );
+}
 
 export function generateStaticParams() {
   return articles.map((a) => ({ slug: a.slug }));
@@ -15,17 +26,25 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
-  if (!article) return { title: "Bài viết không tồn tại | Hạt Lành" };
+  const article = await getStoreArticleBySlug(slug);
+  if (!article) return { title: "Bài viết không tồn tại" };
 
   return {
-    title: `${article.title} | Hạt Lành`,
+    title: article.title,
     description: article.excerpt,
+    keywords: [article.category, "sống lành", "dinh dưỡng", "Hạt Lành"],
     openGraph: {
       title: article.title,
       description: article.excerpt,
       type: "article",
       publishedTime: article.date,
+      images: [{ url: article.image, alt: article.imageAlt }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description: article.excerpt,
+      images: [article.image],
     },
   };
 }
@@ -36,7 +55,7 @@ export default async function ArticleDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getStoreArticleBySlug(slug);
   if (!article) notFound();
 
   const jsonLd = {
@@ -57,7 +76,7 @@ export default async function ArticleDetailPage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
 
       <article className="bg-cream" style={{ paddingBlock: "var(--section-space)" }}>
@@ -119,14 +138,14 @@ export default async function ArticleDetailPage({
                   return (
                     <ul key={i} className="list-disc list-inside flex flex-col gap-2 my-4 text-body text-[17px] leading-[1.65]">
                       {items.map((item, j) => (
-                        <li key={j}>{item.replace("- ", "")}</li>
+                        <li key={j}><InlineMarkdown text={item.replace("- ", "")} /></li>
                       ))}
                     </ul>
                   );
                 }
                 return (
                   <p key={i} className="text-body text-[17px] leading-[1.65] mb-4">
-                    {p}
+                    <InlineMarkdown text={p} />
                   </p>
                 );
               })}
