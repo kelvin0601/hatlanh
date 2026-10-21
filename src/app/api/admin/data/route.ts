@@ -1,15 +1,27 @@
 import { revalidatePath } from "next/cache";
 import { authorizeAdminRequest } from "@/lib/admin-auth";
-import { mutateStore, readStore } from "@/lib/admin-store";
+import {
+  readStore,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  createArticle,
+  updateArticle,
+  deleteArticle,
+  updateOrderStatus,
+  productSlugExists,
+  articleSlugExists,
+} from "@/lib/admin-store";
 import type { AdminPermission } from "@/lib/admin-permissions";
 import { hasPermission } from "@/lib/admin-permissions";
 import { noStoreJson, verifyJsonRequest } from "@/lib/request-security";
 import type { Product } from "@/lib/products";
 import type { Article } from "@/lib/articles";
-import type { OrderStatus } from "@/lib/commerce";
+import type { OrderStatus, PaymentStatus } from "@/lib/commerce";
 
 type Resource = "products" | "articles" | "orders";
 const ORDER_STATUSES = new Set<OrderStatus>(["confirmed", "processing", "shipping", "completed", "cancelled"]);
+const PAYMENT_STATUSES = new Set<PaymentStatus>(["pending", "awaiting_payment", "pay_on_delivery", "paid", "failed", "refunded"]);
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 function permissionFor(resource: Resource, write: boolean): AdminPermission {
@@ -26,7 +38,7 @@ function text(value: unknown, max = 2000) {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
 }
 
-function parseProduct(value: unknown, id: number): Product | null {
+function parseProduct(value: unknown): Omit<Product, "id"> | null {
   if (typeof value !== "object" || value === null) return null;
   const item = value as Record<string, unknown>;
   const slug = text(item.slug, 100);
@@ -41,7 +53,7 @@ function parseProduct(value: unknown, id: number): Product | null {
   const price = Number(item.price);
   const ingredients = Array.isArray(item.ingredients) ? item.ingredients.map((ingredient) => text(ingredient, 60)).filter(Boolean).slice(0, 30) : [];
   if (!SLUG_PATTERN.test(slug) || name.length < 2 || !shortName || !weight || !description || !image.startsWith("/") || !imageAlt || !usage || !storage || !Number.isInteger(price) || price < 1000 || ingredients.length === 0) return null;
-  return { id, slug, name, shortName, weight, price, description, image, imageAlt, ingredients, usage, storage };
+  return { slug, name, shortName, weight, price, description, image, imageAlt, ingredients, usage, storage };
 }
 
 function parseArticle(value: unknown): Article | null {
@@ -96,23 +108,20 @@ export async function POST(request: Request) {
   if (!hasPermission(authorization.session.user.role, permissionFor(resource, true))) return noStoreJson({ message: "Tài khoản không có quyền thực hiện thao tác này." }, { status: 403 });
 
   try {
-    const result = await mutateStore((store) => {
-      if (resource === "products") {
-        const id = Math.max(0, ...store.products.map((product) => product.id)) + 1;
-        const product = parseProduct(body.data, id);
-        if (!product) throw new Error("Thông tin sản phẩm chưa hợp lệ.");
-        if (store.products.some((item) => item.slug === product.slug)) throw new Error("Slug sản phẩm đã tồn tại.");
-        store.products.push(product);
-        return product;
-      }
-      const article = parseArticle(body.data);
-      if (!article) throw new Error("Thông tin bài viết chưa hợp lệ.");
-      if (store.articles.some((item) => item.slug === article.slug)) throw new Error("Slug bài viết đã tồn tại.");
-      store.articles.unshift(article);
-      return article;
-    });
-    revalidatePublicContent(resource, "slug" in result ? result.slug : undefined);
-    return noStoreJson({ item: result }, { status: 201 });
+    if (resource === "products") {
+      const data = parseProduct(body.data);
+      if (!data) throw new Error("Thông tin sản phẩm chưa hợp lệ.");
+      if (await productSlugExists(data.slug)) throw new Error("Slug sản phẩm đã tồn tại.");
+      const product = await createProduct(data);
+      revalidatePublicContent(resource, product.slug);
+      return noStoreJson({ item: product }, { status: 201 });
+    }
+    const data = parseArticle(body.data);
+    if (!data) throw new Error("Thông tin bài viết chưa hợp lệ.");
+    if (await articleSlugExists(data.slug)) throw new Error("Slug bài viết đã tồn tại.");
+    const article = await createArticle(data);
+    revalidatePublicContent(resource, article.slug);
+    return noStoreJson({ item: article }, { status: 201 });
   } catch (error) {
     return noStoreJson({ message: error instanceof Error ? error.message : "Không thể tạo dữ liệu." }, { status: 422 });
   }
@@ -130,40 +139,37 @@ export async function PATCH(request: Request) {
   if (!hasPermission(authorization.session.user.role, permissionFor(resource, true))) return noStoreJson({ message: "Tài khoản không có quyền thực hiện thao tác này." }, { status: 403 });
 
   try {
-    const result = await mutateStore((store) => {
-      if (resource === "products") {
-        const id = Number(body.id);
-        const index = store.products.findIndex((item) => item.id === id);
-        const product = parseProduct(body.data, id);
-        if (index < 0 || !product) throw new Error("Không tìm thấy sản phẩm hoặc dữ liệu chưa hợp lệ.");
-        if (store.products.some((item) => item.id !== id && item.slug === product.slug)) throw new Error("Slug sản phẩm đã tồn tại.");
-        const previousSlug = store.products[index].slug;
-        store.products[index] = product;
-        return { item: product, previousSlug };
-      }
-      if (resource === "articles") {
-        const currentSlug = text(body.id, 120);
-        const index = store.articles.findIndex((item) => item.slug === currentSlug);
-        const article = parseArticle(body.data);
-        if (index < 0 || !article) throw new Error("Không tìm thấy bài viết hoặc dữ liệu chưa hợp lệ.");
-        if (store.articles.some((item) => item.slug !== currentSlug && item.slug === article.slug)) throw new Error("Slug bài viết đã tồn tại.");
-        store.articles[index] = article;
-        return { item: article, previousSlug: currentSlug };
-      }
-      const orderId = text(body.id, 80);
-      const data = body.data as { status?: unknown };
-      const status = data?.status;
-      if (!ORDER_STATUSES.has(status as OrderStatus)) throw new Error("Trạng thái đơn hàng không hợp lệ.");
-      const order = store.orders.find((item) => item.id === orderId);
-      if (!order) throw new Error("Không tìm thấy đơn hàng.");
-      order.status = status as OrderStatus;
-      return { item: order, previousSlug: "" };
-    });
-    if (resource !== "orders") {
-      revalidatePublicContent(resource, result.previousSlug);
-      revalidatePublicContent(resource, "slug" in result.item ? result.item.slug : undefined);
+    if (resource === "products") {
+      const id = Number(body.id);
+      const data = parseProduct(body.data);
+      if (!data) throw new Error("Thông tin sản phẩm chưa hợp lệ.");
+      if (await productSlugExists(data.slug, id)) throw new Error("Slug sản phẩm đã tồn tại.");
+      const product = await updateProduct(id, data);
+      revalidatePublicContent(resource, product.slug);
+      return noStoreJson({ item: product });
     }
-    return noStoreJson({ item: result.item });
+    if (resource === "articles") {
+      const currentSlug = text(body.id, 120);
+      const data = parseArticle(body.data);
+      if (!data) throw new Error("Thông tin bài viết chưa hợp lệ.");
+      if (await articleSlugExists(data.slug, currentSlug)) throw new Error("Slug bài viết đã tồn tại.");
+      const article = await updateArticle(currentSlug, data);
+      revalidatePublicContent(resource, currentSlug);
+      revalidatePublicContent(resource, article.slug);
+      return noStoreJson({ item: article });
+    }
+    const orderId = text(body.id, 80);
+    const data = body.data as { status?: unknown; paymentStatus?: unknown };
+    const status = data?.status;
+    const paymentStatus = data?.paymentStatus;
+    if (status === undefined && paymentStatus === undefined) throw new Error("Không có trạng thái cần cập nhật.");
+    if (status !== undefined && !ORDER_STATUSES.has(status as OrderStatus)) throw new Error("Trạng thái đơn hàng không hợp lệ.");
+    if (paymentStatus !== undefined && !PAYMENT_STATUSES.has(paymentStatus as PaymentStatus)) throw new Error("Trạng thái thanh toán không hợp lệ.");
+    const order = await updateOrderStatus(orderId, {
+      status: status as string | undefined,
+      paymentStatus: paymentStatus as string | undefined,
+    });
+    return noStoreJson({ item: order });
   } catch (error) {
     return noStoreJson({ message: error instanceof Error ? error.message : "Không thể cập nhật dữ liệu." }, { status: 422 });
   }
@@ -181,19 +187,14 @@ export async function DELETE(request: Request) {
   if (!hasPermission(authorization.session.user.role, permissionFor(resource, true))) return noStoreJson({ message: "Tài khoản không có quyền thực hiện thao tác này." }, { status: 403 });
 
   try {
-    const slug = await mutateStore((store) => {
-      if (resource === "products") {
-        const id = Number(body.id);
-        const item = store.products.find((product) => product.id === id);
-        if (!item) throw new Error("Không tìm thấy sản phẩm.");
-        store.products = store.products.filter((product) => product.id !== id);
-        return item.slug;
-      }
-      const articleSlug = text(body.id, 120);
-      if (!store.articles.some((article) => article.slug === articleSlug)) throw new Error("Không tìm thấy bài viết.");
-      store.articles = store.articles.filter((article) => article.slug !== articleSlug);
-      return articleSlug;
-    });
+    if (resource === "products") {
+      const id = Number(body.id);
+      const slug = await deleteProduct(id);
+      revalidatePublicContent(resource, slug);
+      return noStoreJson({ ok: true });
+    }
+    const articleSlug = text(body.id, 120);
+    const slug = await deleteArticle(articleSlug);
     revalidatePublicContent(resource, slug);
     return noStoreJson({ ok: true });
   } catch (error) {

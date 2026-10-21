@@ -16,6 +16,12 @@ export function anonymizeRateLimitKey(value: string) {
 
 export function takeRateLimit(key: string, limit: number, windowMs: number) {
   const now = Date.now();
+  if (buckets.size > 5_000) {
+    for (const [bucketKey, entry] of buckets) {
+      if (entry.resetAt <= now || buckets.size > 4_000) buckets.delete(bucketKey);
+      if (buckets.size <= 4_000) break;
+    }
+  }
   const current = buckets.get(key);
   if (!current || current.resetAt <= now) {
     buckets.set(key, { count: 1, resetAt: now + windowMs });
@@ -58,4 +64,3 @@ export function noStoreJson(data: unknown, init?: ResponseInit) {
   headers.set("Pragma", "no-cache");
   return Response.json(data, { ...init, headers });
 }
-

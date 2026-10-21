@@ -1,11 +1,13 @@
 import { calculateOrder, resolveCart, type CheckoutCustomer, type Order, type PaymentMethod } from "@/lib/commerce";
 import { sendOrderEmails } from "@/lib/email";
-import { addOrderToStore, getStoreProducts } from "@/lib/admin-store";
+import { getStoreProducts, reserveOrder, updateOrderEmailStatus } from "@/lib/admin-store";
+import { anonymizeRateLimitKey, getClientAddress, noStoreJson, takeRateLimit, verifyJsonRequest, verifySameOrigin } from "@/lib/request-security";
 
 interface OrderRequest {
   customer?: Partial<CheckoutCustomer>;
   paymentMethod?: PaymentMethod;
   cart?: { productId: number; quantity: number }[];
+  idempotencyKey?: string;
 }
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -16,13 +18,23 @@ function isValidText(value: unknown, min: number, max: number): value is string 
 }
 
 export async function POST(request: Request) {
+  const requestCheck = verifyJsonRequest(request, 32_768);
+  if (!requestCheck.ok) return noStoreJson({ message: requestCheck.message }, { status: requestCheck.status });
+  if (!verifySameOrigin(request)) return noStoreJson({ message: "Nguồn yêu cầu không hợp lệ." }, { status: 403 });
+  const ipLimit = takeRateLimit(anonymizeRateLimitKey(`order-ip:${getClientAddress(request)}`), 12, 10 * 60 * 1000);
+  if (!ipLimit.allowed) return noStoreJson({ message: "Bạn thao tác quá nhanh. Vui lòng thử lại sau." }, { status: 429, headers: { "Retry-After": String(ipLimit.retryAfter) } });
+
   let body: OrderRequest;
   try {
     const parsed = (await request.json()) as unknown;
     if (typeof parsed !== "object" || parsed === null) throw new Error("Invalid payload");
     body = parsed as OrderRequest;
   } catch {
-    return Response.json({ message: "Dữ liệu gửi lên không hợp lệ." }, { status: 400 });
+    return noStoreJson({ message: "Dữ liệu gửi lên không hợp lệ." }, { status: 400 });
+  }
+
+  if (typeof body.idempotencyKey !== "string" || !/^[0-9a-f]{8}-[0-9a-f-]{27,}$/.test(body.idempotencyKey)) {
+    return noStoreJson({ message: "Phiên đặt hàng không hợp lệ. Vui lòng tải lại trang." }, { status: 422 });
   }
 
   const customer = body.customer;
@@ -37,11 +49,14 @@ export async function POST(request: Request) {
     !isValidText(customer.city, 2, 80) ||
     (customer.note !== undefined && !isValidText(customer.note, 0, 500))
   ) {
-    return Response.json({ message: "Vui lòng kiểm tra lại thông tin nhận hàng." }, { status: 422 });
+    return noStoreJson({ message: "Vui lòng kiểm tra lại thông tin nhận hàng." }, { status: 422 });
   }
 
+  const identityLimit = takeRateLimit(anonymizeRateLimitKey(`order-customer:${customer.email.trim().toLowerCase()}:${customer.phone.trim()}`), 5, 30 * 60 * 1000);
+  if (!identityLimit.allowed) return noStoreJson({ message: "Đã có nhiều đơn được gửi từ thông tin này. Vui lòng thử lại sau." }, { status: 429, headers: { "Retry-After": String(identityLimit.retryAfter) } });
+
   if (body.paymentMethod !== "cod" && body.paymentMethod !== "bank") {
-    return Response.json({ message: "Phương thức thanh toán không hợp lệ." }, { status: 422 });
+    return noStoreJson({ message: "Phương thức thanh toán không hợp lệ." }, { status: 422 });
   }
 
   if (
@@ -59,13 +74,13 @@ export async function POST(request: Request) {
     ) ||
     new Set(body.cart.map((line) => line.productId)).size !== body.cart.length
   ) {
-    return Response.json({ message: "Giỏ hàng không có sản phẩm hợp lệ." }, { status: 422 });
+    return noStoreJson({ message: "Giỏ hàng không có sản phẩm hợp lệ." }, { status: 422 });
   }
 
   const catalog = await getStoreProducts();
   const items = resolveCart(body.cart, catalog, false);
   if (items.length !== body.cart.length) {
-    return Response.json({ message: "Một sản phẩm trong giỏ không còn hợp lệ." }, { status: 422 });
+    return noStoreJson({ message: "Một sản phẩm trong giỏ không còn hợp lệ." }, { status: 422 });
   }
 
   const totals = calculateOrder(items);
@@ -82,14 +97,25 @@ export async function POST(request: Request) {
       note: customer.note?.trim() ?? "",
     },
     paymentMethod: body.paymentMethod,
-    paymentStatus: body.paymentMethod === "cod" ? "pay_on_delivery" : "pending",
+    paymentStatus: body.paymentMethod === "cod" ? "pay_on_delivery" : "awaiting_payment",
     status: "confirmed",
     items,
     ...totals,
     emailStatus: "not_configured",
   };
 
-  order.emailStatus = await sendOrderEmails(order);
-  await addOrderToStore(order);
-  return Response.json({ order }, { status: 201 });
+  let reservation;
+  try {
+    reservation = await reserveOrder(order, body.idempotencyKey);
+  } catch (error) {
+    if (error instanceof Error && error.message === "IDEMPOTENCY_CONFLICT") return noStoreJson({ message: "Phiên đặt hàng đã được sử dụng. Vui lòng tải lại trang." }, { status: 409 });
+    return noStoreJson({ message: "Chưa thể ghi nhận đơn hàng. Vui lòng thử lại." }, { status: 503 });
+  }
+  if (reservation.created) {
+    reservation.order.emailStatus = await sendOrderEmails(reservation.order);
+    await updateOrderEmailStatus(reservation.order.id, reservation.order.emailStatus);
+  }
+  const safeOrder = { ...reservation.order };
+  delete safeOrder.idempotencyKey;
+  return noStoreJson({ order: safeOrder }, { status: reservation.created ? 201 : 200 });
 }

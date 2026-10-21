@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { ArrowLeft, Building2, Check, LoaderCircle, LockKeyhole, PackageCheck, WalletCards } from "lucide-react";
 import { useShop } from "@/components/commerce/ShopProvider";
 import { calculateOrder, resolveCart, type CheckoutCustomer, type Order, type PaymentMethod } from "@/lib/commerce";
@@ -18,6 +18,7 @@ export default function CheckoutPage() {
   const totals = calculateOrder(items);
   const [form, setForm] = useState<CheckoutCustomer>({ name: "", phone: "", email: "", address: "", city: "", note: "" });
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
+  const idempotencyKeyRef = useRef("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -30,12 +31,13 @@ export default function CheckoutPage() {
     if (submitting || items.length === 0) return;
     setSubmitting(true);
     setError("");
+    if (!idempotencyKeyRef.current) idempotencyKeyRef.current = crypto.randomUUID();
 
     try {
       const response = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customer: form, paymentMethod, cart }),
+        body: JSON.stringify({ customer: form, paymentMethod, cart, idempotencyKey: idempotencyKeyRef.current }),
       });
       const result = (await response.json()) as { order?: Order; message?: string };
       if (!response.ok || !result.order) throw new Error(result.message ?? "Không thể tạo đơn hàng.");
@@ -78,7 +80,7 @@ export default function CheckoutPage() {
             <p className="mb-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-sage">Bước cuối cùng</p>
             <h1 className="text-[clamp(2rem,8vw,2.5rem)] font-medium leading-[1.12] tracking-[-0.035em] text-ink">Thông tin thanh toán</h1>
           </div>
-          <div className="hidden items-center gap-2 text-[13px] text-muted sm:flex"><LockKeyhole className="h-4 w-4 text-forest" /> Kết nối an toàn</div>
+          <div className="hidden items-center gap-2 text-[13px] text-muted sm:flex"><LockKeyhole className="h-4 w-4 text-forest" /> Không thu thập dữ liệu thẻ</div>
         </div>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">

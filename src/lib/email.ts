@@ -26,6 +26,7 @@ async function sendEmail(to: string[], subject: string, html: string) {
       subject,
       html,
     }),
+    signal: AbortSignal.timeout(10_000),
   });
 
   if (!response.ok) throw new Error(`Email provider returned ${response.status}`);

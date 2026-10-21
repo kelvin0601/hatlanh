@@ -19,6 +19,7 @@ export interface CheckoutCustomer {
 }
 
 export type PaymentMethod = "cod" | "bank";
+export type PaymentStatus = "pending" | "awaiting_payment" | "pay_on_delivery" | "paid" | "failed" | "refunded";
 export type OrderStatus = "confirmed" | "processing" | "shipping" | "completed" | "cancelled";
 
 export interface OrderItem {
@@ -36,14 +37,17 @@ export interface Order {
   createdAt: string;
   customer: CheckoutCustomer;
   paymentMethod: PaymentMethod;
-  paymentStatus: "pending" | "pay_on_delivery";
+  paymentStatus: PaymentStatus;
   status: OrderStatus;
   items: OrderItem[];
   subtotal: number;
   shippingFee: number;
   total: number;
   emailStatus: "sent" | "not_configured" | "failed";
+  idempotencyKey?: string;
 }
+
+export type OrderTrackingDto = Pick<Order, "id" | "createdAt" | "paymentMethod" | "paymentStatus" | "status" | "items" | "subtotal" | "shippingFee" | "total">;
 
 export function getProductById(id: number) {
   return products.find((product) => product.id === id);
@@ -74,6 +78,18 @@ export function calculateOrder(items: OrderItem[]) {
 
 export function getPaymentLabel(method: PaymentMethod) {
   return method === "cod" ? "Thanh toán khi nhận hàng (COD)" : "Chuyển khoản ngân hàng";
+}
+
+export function getPaymentStatusLabel(status: PaymentStatus) {
+  const labels: Record<PaymentStatus, string> = {
+    pending: "Đang xử lý",
+    awaiting_payment: "Chờ thanh toán",
+    pay_on_delivery: "Thu khi giao hàng",
+    paid: "Đã thanh toán",
+    failed: "Thanh toán lỗi",
+    refunded: "Đã hoàn tiền",
+  };
+  return labels[status];
 }
 
 export function findProductFromOrderItem(slug: string) {

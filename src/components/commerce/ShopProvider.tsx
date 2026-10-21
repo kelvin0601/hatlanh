@@ -15,7 +15,7 @@ import type { CartLine, Order } from "@/lib/commerce";
 import type { Product } from "@/lib/products";
 
 const CART_KEY = "hat-lanh-cart-v1";
-const ORDERS_KEY = "hat-lanh-orders-v1";
+const LEGACY_ORDERS_KEY = "hat-lanh-orders-v1";
 const LAST_ORDER_KEY = "hat-lanh-last-order-v1";
 const EMPTY_CART: CartLine[] = [];
 const cartListeners = new Set<() => void>();
@@ -46,6 +46,7 @@ const ShopContext = createContext<ShopContextValue | null>(null);
 
 function readCart(): CartLine[] {
   try {
+    localStorage.removeItem(LEGACY_ORDERS_KEY);
     const value = JSON.parse(localStorage.getItem(CART_KEY) ?? "[]") as unknown;
     if (!Array.isArray(value)) return [];
     return value.filter(
@@ -134,9 +135,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
   const saveOrder = useCallback((order: Order) => {
     try {
-      const previous = JSON.parse(localStorage.getItem(ORDERS_KEY) ?? "[]") as unknown;
-      const orders = Array.isArray(previous) ? previous : [];
-      localStorage.setItem(ORDERS_KEY, JSON.stringify([order, ...orders].slice(0, 20)));
+      localStorage.removeItem(LEGACY_ORDERS_KEY);
       sessionStorage.setItem(LAST_ORDER_KEY, JSON.stringify(order));
       lastOrderSnapshot = order;
     } catch {
@@ -197,15 +196,6 @@ export function useShop() {
   const context = useContext(ShopContext);
   if (!context) throw new Error("useShop must be used inside ShopProvider");
   return context;
-}
-
-export function readStoredOrders(): Order[] {
-  try {
-    const value = JSON.parse(localStorage.getItem(ORDERS_KEY) ?? "[]") as unknown;
-    return Array.isArray(value) ? (value as Order[]) : [];
-  } catch {
-    return [];
-  }
 }
 
 export function readLastOrder(): Order | null {

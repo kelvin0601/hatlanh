@@ -36,7 +36,8 @@ export function AdminShell({ children, user, csrfToken }: { children: React.Reac
   const allowedNavigation = navigation.filter((item) => !item.permission || hasPermission(user.role, item.permission));
 
   async function logout() {
-    await fetch("/api/admin/session", { method: "DELETE", headers: { "X-CSRF-Token": csrfToken } });
+    const response = await fetch("/api/admin/session", { method: "DELETE", headers: { "X-CSRF-Token": csrfToken } });
+    if (!response.ok) return router.refresh();
     router.replace("/admin/login");
     router.refresh();
   }

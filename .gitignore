@@ -48,3 +48,7 @@ Thumbs.db
 # Certificates and local secrets
 *.pem
 *.key
+
+# Runtime customer and authentication data
+/data/*.json
+/data/*.tmp
