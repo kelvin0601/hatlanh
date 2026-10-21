@@ -98,7 +98,7 @@ async function queryAllOrders(): Promise<Order[]> {
 export async function readStore(): Promise<StoreData> {
   "use cache";
   cacheLife("max");
-  cacheTag("hat-lanh-store");
+  cacheTag("an-vi-store");
 
   const [productRows, articleRows, orders] = await Promise.all([
     db.select().from(schema.products).orderBy(schema.products.id),
@@ -127,13 +127,13 @@ export async function readAdminDashboardStore(): Promise<StoreData> {
 }
 
 function invalidateStore() {
-  revalidateTag("hat-lanh-store", { expire: 0 });
+  revalidateTag("an-vi-store", { expire: 0 });
 }
 
 export async function getStoreProducts(): Promise<Product[]> {
   "use cache";
   cacheLife("max");
-  cacheTag("hat-lanh-store");
+  cacheTag("an-vi-store");
   const rows = await db.select().from(schema.products).orderBy(schema.products.id);
   return rows.map(toProduct);
 }
@@ -141,7 +141,7 @@ export async function getStoreProducts(): Promise<Product[]> {
 export async function getStoreArticles(): Promise<Article[]> {
   "use cache";
   cacheLife("max");
-  cacheTag("hat-lanh-store");
+  cacheTag("an-vi-store");
   const rows = await db.select().from(schema.articles).orderBy(desc(schema.articles.date));
   return rows.map(toArticle);
 }
@@ -149,7 +149,7 @@ export async function getStoreArticles(): Promise<Article[]> {
 export async function getStoreProductBySlug(slug: string): Promise<Product | undefined> {
   "use cache";
   cacheLife("max");
-  cacheTag("hat-lanh-store");
+  cacheTag("an-vi-store");
   const rows = await db.select().from(schema.products).where(eq(schema.products.slug, slug)).limit(1);
   return rows[0] ? toProduct(rows[0]) : undefined;
 }
@@ -157,7 +157,7 @@ export async function getStoreProductBySlug(slug: string): Promise<Product | und
 export async function getStoreArticleBySlug(slug: string): Promise<Article | undefined> {
   "use cache";
   cacheLife("max");
-  cacheTag("hat-lanh-store");
+  cacheTag("an-vi-store");
   const rows = await db.select().from(schema.articles).where(eq(schema.articles.slug, slug)).limit(1);
   return rows[0] ? toArticle(rows[0]) : undefined;
 }

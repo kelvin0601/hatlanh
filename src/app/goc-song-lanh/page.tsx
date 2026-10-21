@@ -7,16 +7,16 @@ export const metadata: Metadata = {
   title: "Góc sống lành — Blog dinh dưỡng và lối sống",
   keywords: ["blog sống lành", "dinh dưỡng", "công thức ngũ cốc", "lối sống khỏe"],
   description:
-    "Kiến thức về ngũ cốc, công thức món ăn lành mạnh và bí quyết sống khỏe mỗi ngày từ Hạt Lành.",
+    "Kiến thức về ngũ cốc, công thức món ăn lành mạnh và bí quyết sống khỏe mỗi ngày từ An Vị.",
   openGraph: {
-    title: "Góc sống lành — Blog | Hạt Lành",
-    description: "Kiến thức ngũ cốc, công thức và bí quyết sống khỏe từ Hạt Lành.",
+    title: "Góc sống lành — Blog | An Vị",
+    description: "Kiến thức ngũ cốc, công thức và bí quyết sống khỏe từ An Vị.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Góc sống lành — Blog | Hạt Lành",
-    description: "Kiến thức ngũ cốc, công thức và bí quyết sống khỏe từ Hạt Lành.",
+    title: "Góc sống lành — Blog | An Vị",
+    description: "Kiến thức ngũ cốc, công thức và bí quyết sống khỏe từ An Vị.",
   },
 };
 

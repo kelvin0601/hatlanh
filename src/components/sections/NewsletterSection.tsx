@@ -24,7 +24,7 @@ export function NewsletterSection() {
                 fontSize: "clamp(1.5rem, 3vw, 2rem)",
               }}
             >
-              Cùng Hạt Lành sống lành mỗi ngày
+              Cùng An Vị sống lành mỗi ngày
             </h2>
             <p className="text-body text-[15px] leading-[1.6]">
               Nhận thông tin về sản phẩm mới, công thức hay và những câu chuyện từ tế.

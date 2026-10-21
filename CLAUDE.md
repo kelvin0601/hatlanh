@@ -1,9 +1,9 @@
-# Hạt Lành — Project Rules
+# An Vị — Project Rules
 
 ## SEO (Luôn ưu tiên cao nhất)
 
 - Mỗi trang PHẢI có metadata riêng (title, description, keywords) bằng tiếng Việt, sử dụng Next.js `generateMetadata` hoặc `export const metadata`.
-- Title format: `Tên trang | Hạt Lành — Ngũ cốc thiên nhiên`
+- Title format: `Tên trang | An Vị — Ngũ cốc thiên nhiên`
 - Luôn dùng semantic HTML: `<article>`, `<section>`, `<nav>`, `<header>`, `<footer>`, `<main>`.
 - Mỗi trang chỉ có 1 `<h1>`. Heading hierarchy phải đúng thứ tự (h1 → h2 → h3).
 - Trang sản phẩm phải có JSON-LD structured data (Product schema).

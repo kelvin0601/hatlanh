@@ -1,4 +1,4 @@
-# Hạt Lành
+# An Vị
 
 Website bán ngũ cốc thiên nhiên xây dựng bằng Next.js 16, React 19 và Tailwind CSS 4.
 
@@ -17,7 +17,7 @@ Sao chép `.env.example` thành `.env.local`, sau đó điền:
 
 ```bash
 RESEND_API_KEY=re_xxxxxxxxx
-ORDER_FROM_EMAIL="Hạt Lành <orders@your-verified-domain.com>"
+ORDER_FROM_EMAIL="An Vị <orders@your-verified-domain.com>"
 STORE_NOTIFICATION_EMAIL=hello@your-domain.com
 ADMIN_BOOTSTRAP_USERNAME="owner"
 ADMIN_BOOTSTRAP_PASSWORD=""

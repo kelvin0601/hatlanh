@@ -33,7 +33,7 @@ export function AdminLoginForm() {
         <div className="mb-7 text-center">
           <span className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-forest text-white"><Leaf className="h-7 w-7" /></span>
           <h1 className="text-2xl font-semibold text-ink">Đăng nhập quản trị</h1>
-          <p className="mt-2 text-[14px] text-muted">Quản lý sản phẩm, đơn hàng và nội dung Hạt Lành.</p>
+          <p className="mt-2 text-[14px] text-muted">Quản lý sản phẩm, đơn hàng và nội dung An Vị.</p>
         </div>
         <form onSubmit={submit} className="space-y-4">
           <label htmlFor="admin-username" className="block text-[14px] font-semibold text-ink">Tên đăng nhập</label>

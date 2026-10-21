@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/thanh-toan", "/dat-hang-thanh-cong", "/tra-cuu-don-hang", "/admin", "/api"],
       },
     ],
-    sitemap: "https://hatlanh.vn/sitemap.xml",
+    sitemap: "https://anvi.vn/sitemap.xml",
   };
 }

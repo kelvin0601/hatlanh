@@ -1,4 +1,4 @@
-# Hạt Lành – Homepage image assets (starter pack)
+# An Vị – Homepage image assets (starter pack)
 
 ## Contents
 - `01_hero/hero-desktop-clean.png`: clean, high-resolution banner without UI/text.

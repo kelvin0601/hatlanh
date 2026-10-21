@@ -1,4 +1,4 @@
-# HẠT LÀNH — Mobile-First Design Specification
+# AN VỊ — Mobile-First Design Specification
 
 > Version 1.1 · Companion to `design.md` · Primary design viewport: **390 × 844 CSS px**. Validate 320, 360, 375, 390, 414, 430 px and tablets.  
 > Design direction: **Modern Organic × Cinematic Commerce × Mindful Living**. Mobile is the **source of truth**, desktop is progressive enhancement.
@@ -66,7 +66,7 @@
 │                                │
 │  2–3 lines brand introduction  │  17px
 │  [ Khám phá sản phẩm      → ]  │  full-width CTA
-│  Câu chuyện Hạt Lành       ↗   │  text link
+│  Câu chuyện An Vị       ↗   │  text link
 │                                │
 │ ┌────────────────────────────┐ │
 │ │                            │ │
@@ -84,7 +84,7 @@
 │  Wide 4:5 story video / image  │
 │  H2 + 2–3 short lines + link   │
 ├────────────────────────────────┤
-│  NGŨ CỐC HẠT LÀNH             │
+│  NGŨ CỐC AN VỊ             │
 │  [ PRODUCT CARD → ]            │
 │  [ swipe next → ]              │
 │  All products link             │
@@ -93,7 +93,7 @@
 │  Calm breakfast video / image  │
 │  H2 + short reflection + CTA   │
 ├────────────────────────────────┤
-│  ĐIỀU HẠT LÀNH TRÂN TRỌNG     │
+│  ĐIỀU AN VỊ TRÂN TRỌNG     │
 │  3 simple stacked values       │
 ├────────────────────────────────┤
 │  GÓC SỐNG LÀNH                │

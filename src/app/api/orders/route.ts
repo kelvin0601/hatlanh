@@ -84,7 +84,7 @@ export async function POST(request: Request) {
   }
 
   const totals = calculateOrder(items);
-  const id = `HL${new Date().toISOString().slice(2, 10).replaceAll("-", "")}-${crypto.randomUUID().slice(0, 6).toUpperCase()}`;
+  const id = `AV${new Date().toISOString().slice(2, 10).replaceAll("-", "")}-${crypto.randomUUID().slice(0, 6).toUpperCase()}`;
   const order: Order = {
     id,
     createdAt: new Date().toISOString(),

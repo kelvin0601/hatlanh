@@ -1,4 +1,4 @@
-# Hạt Lành — Patterns & Conventions
+# An Vị — Patterns & Conventions
 
 ## 1. Component Patterns
 
@@ -43,7 +43,7 @@ components/
 Neon DB → admin-store.ts (Drizzle + "use cache") → Server Component → HTML/props
 ```
 
-All public reads cached with `cacheTag("hat-lanh-store")` + `cacheLife("max")`.
+All public reads cached with `cacheTag("an-vi-store")` + `cacheLife("max")`.
 
 ### Admin Read Path
 
@@ -57,12 +57,12 @@ DB → readAdminStore(permission) → requireAdminSession() check → Server Pag
 Client fetch("/api/...") → API route validates → admin-store CRUD function → Drizzle query → invalidateStore() → cache busted
 ```
 
-`invalidateStore()` calls `revalidateTag("hat-lanh-store", { expire: 0 })` + `revalidatePath()` for specific routes.
+`invalidateStore()` calls `revalidateTag("an-vi-store", { expire: 0 })` + `revalidatePath()` for specific routes.
 
 ### Cart (Client-only)
 
-- `ShopProvider` uses `useSyncExternalStore` with `localStorage` backing (`"hat-lanh-cart-v1"`).
-- Last order saved to `sessionStorage` (`"hat-lanh-last-order-v1"`).
+- `ShopProvider` uses `useSyncExternalStore` with `localStorage` backing (`"an-vi-cart-v1"`).
+- Last order saved to `sessionStorage` (`"an-vi-last-order-v1"`).
 - Manual pub/sub: `cartListeners` Set, `subscribeToCart()`, `updateCart()`.
 
 ### Type Mapping
@@ -182,7 +182,7 @@ body:has(.admin-root) [data-site-footer] { display: none }
 
 - 32 random bytes, base64url-encoded.
 - Stored as HMAC hash in DB. 8-hour TTL.
-- Cookie: `__Host-hat_lanh_session` (production) / `hat_lanh_session` (dev).
+- Cookie: `__Host-an_vi_session` (production) / `an_vi_session` (dev).
 - HttpOnly, SameSite=Strict, Secure (production).
 
 ### Content Security Policy
@@ -203,14 +203,14 @@ All public read functions in `admin-store.ts`:
 async function getStoreProducts() {
   "use cache";
   cacheLife("max");
-  cacheTag("hat-lanh-store");
+  cacheTag("an-vi-store");
   // ... Drizzle query
 }
 ```
 
 ### Invalidation
 
-- Mutations → `revalidateTag("hat-lanh-store", { expire: 0 })`.
+- Mutations → `revalidateTag("an-vi-store", { expire: 0 })`.
 - Route-specific: `revalidatePath("/san-pham")`, `revalidatePath("/goc-song-lanh")`.
 
 ### API Responses
@@ -231,7 +231,7 @@ async function getStoreProducts() {
 
 ### Order ID Format
 
-`HL{YYMMDD}-{6 hex uppercase}` — ví dụ `HL261021-A3B4C5`
+`AV{YYMMDD}-{6 hex uppercase}` — ví dụ `AV261021-A3B4C5`
 
 ### Pricing
 
@@ -277,7 +277,7 @@ DELETE — delete product or article
 
 ## 9. SEO Patterns
 
-- Every page: `metadata` or `generateMetadata()`. Title: `"Page | Hạt Lành — Ngũ cốc thiên nhiên"`.
+- Every page: `metadata` or `generateMetadata()`. Title: `"Page | An Vị — Ngũ cốc thiên nhiên"`.
 - OpenGraph + Twitter Card on all pages.
 - Product/article pages: JSON-LD structured data (`Product`/`Article` schema).
 - `generateStaticParams()` for product + article detail pages.

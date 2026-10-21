@@ -32,7 +32,7 @@ export function StorySection() {
       >
         <div className="max-w-[480px]">
           <p className="text-white/75 text-[12px] font-semibold uppercase tracking-[0.14em] mb-4">
-            Câu chuyện Hạt Lành
+            Câu chuyện An Vị
           </p>
           <h2
             className="text-white leading-[1.08] tracking-[-0.025em] font-medium mb-5"

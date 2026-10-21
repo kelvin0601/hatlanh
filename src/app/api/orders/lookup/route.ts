@@ -2,7 +2,7 @@ import { findOrderForCustomer } from "@/lib/admin-store";
 import type { OrderTrackingDto } from "@/lib/commerce";
 import { anonymizeRateLimitKey, getClientAddress, noStoreJson, takeRateLimit, verifyJsonRequest, verifySameOrigin } from "@/lib/request-security";
 
-const ORDER_ID_PATTERN = /^HL\d{6}-[A-Z0-9]{6}$/;
+const ORDER_ID_PATTERN = /^AV\d{6}-[A-Z0-9]{6}$/;
 const PHONE_PATTERN = /^[0-9+()\s.-]{8,20}$/;
 
 export async function POST(request: Request) {

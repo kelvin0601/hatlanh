@@ -32,7 +32,7 @@ export async function generateMetadata({
   return {
     title: article.title,
     description: article.excerpt,
-    keywords: [article.category, "sống lành", "dinh dưỡng", "Hạt Lành"],
+    keywords: [article.category, "sống lành", "dinh dưỡng", "An Vị"],
     openGraph: {
       title: article.title,
       description: article.excerpt,
@@ -66,7 +66,7 @@ export default async function ArticleDetailPage({
     datePublished: article.date,
     publisher: {
       "@type": "Organization",
-      name: "Hạt Lành",
+      name: "An Vị",
     },
   };
 
@@ -120,7 +120,7 @@ export default async function ArticleDetailPage({
               />
             </div>
 
-            <div className="prose-hatlanh">
+            <div className="prose-anvi">
               {paragraphs.map((p, i) => {
                 if (p.startsWith("## ")) {
                   return (
@@ -157,7 +157,7 @@ export default async function ArticleDetailPage({
                 href="/san-pham"
                 className="inline-flex items-center justify-center gap-2 bg-forest hover:bg-forest-hover text-white font-semibold text-base h-[52px] px-7 rounded-full transition-colors"
               >
-                Khám phá sản phẩm Hạt Lành
+                Khám phá sản phẩm An Vị
               </Link>
             </div>
           </div>

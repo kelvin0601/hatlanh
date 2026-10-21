@@ -22,7 +22,7 @@ export async function JournalSection() {
                 fontSize: "clamp(1.875rem, 4vw, 2.75rem)",
               }}
             >
-              Chuyện hạt lành, chuyện sống an
+              Chuyện an vị, chuyện sống lành
             </h2>
           </div>
           <Link

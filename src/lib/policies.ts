@@ -31,7 +31,7 @@ Nếu gặp khó khăn khi đặt hàng, vui lòng liên hệ hotline hoặc g�
     title: "Chính sách giao hàng",
     content: `## Phạm vi giao hàng
 
-Hạt Lành giao hàng toàn quốc thông qua các đối tác vận chuyển uy tín.
+An Vị giao hàng toàn quốc thông qua các đối tác vận chuyển uy tín.
 
 ## Thời gian giao hàng
 
@@ -52,7 +52,7 @@ Sau khi đơn hàng được gửi đi, bạn sẽ nhận mã vận đơn qua em
     title: "Chính sách đổi trả",
     content: `## Điều kiện đổi trả
 
-Hạt Lành chấp nhận đổi trả trong **7 ngày** kể từ ngày nhận hàng nếu:
+An Vị chấp nhận đổi trả trong **7 ngày** kể từ ngày nhận hàng nếu:
 
 - Sản phẩm bị lỗi do nhà sản xuất
 - Sản phẩm giao sai so với đơn hàng
@@ -60,9 +60,9 @@ Hạt Lành chấp nhận đổi trả trong **7 ngày** kể từ ngày nhận 
 
 ## Quy trình đổi trả
 
-1. Liên hệ Hạt Lành qua hotline hoặc email
+1. Liên hệ An Vị qua hotline hoặc email
 2. Cung cấp mã đơn hàng và ảnh chụp sản phẩm
-3. Hạt Lành xác nhận và hướng dẫn gửi trả
+3. An Vị xác nhận và hướng dẫn gửi trả
 4. Hoàn tiền hoặc gửi sản phẩm thay thế trong 3–5 ngày
 
 ## Lưu ý
@@ -74,7 +74,7 @@ Sản phẩm đổi trả cần còn nguyên bao bì. Không áp dụng đổi t
     title: "Chính sách bảo mật",
     content: `## Thu thập thông tin
 
-Hạt Lành thu thập thông tin cần thiết để xử lý đơn hàng: họ tên, số điện thoại, địa chỉ giao hàng và email.
+An Vị thu thập thông tin cần thiết để xử lý đơn hàng: họ tên, số điện thoại, địa chỉ giao hàng và email.
 
 ## Sử dụng thông tin
 
@@ -96,22 +96,22 @@ Bạn có quyền yêu cầu xem, chỉnh sửa hoặc xóa thông tin cá nhân
     title: "Điều khoản sử dụng",
     content: `## Điều khoản chung
 
-Khi sử dụng website Hạt Lành, bạn đồng ý tuân thủ các điều khoản dưới đây.
+Khi sử dụng website An Vị, bạn đồng ý tuân thủ các điều khoản dưới đây.
 
 ## Sản phẩm và giá cả
 
 - Giá sản phẩm có thể thay đổi mà không cần báo trước
-- Hạt Lành nỗ lực cung cấp thông tin chính xác nhất có thể
+- An Vị nỗ lực cung cấp thông tin chính xác nhất có thể
 - Hình ảnh sản phẩm mang tính minh họa
 
 ## Đặt hàng
 
-- Đơn hàng chỉ được xác nhận sau khi Hạt Lành gửi email/SMS xác nhận
-- Hạt Lành có quyền từ chối đơn hàng nếu phát hiện thông tin không chính xác
+- Đơn hàng chỉ được xác nhận sau khi An Vị gửi email/SMS xác nhận
+- An Vị có quyền từ chối đơn hàng nếu phát hiện thông tin không chính xác
 
 ## Sở hữu trí tuệ
 
-Toàn bộ nội dung, hình ảnh và thiết kế trên website thuộc quyền sở hữu của Hạt Lành.`,
+Toàn bộ nội dung, hình ảnh và thiết kế trên website thuộc quyền sở hữu của An Vị.`,
   },
 ];
 

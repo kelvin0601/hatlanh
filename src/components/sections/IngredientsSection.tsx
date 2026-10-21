@@ -32,7 +32,7 @@ export function IngredientsSection() {
                 fontSize: "clamp(1.875rem, 4vw, 3.25rem)",
               }}
             >
-              Những hạt lành
+              Những hạt an lành
               <br />
               từ đất trời
             </h2>

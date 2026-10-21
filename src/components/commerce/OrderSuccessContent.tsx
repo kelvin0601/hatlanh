@@ -45,7 +45,7 @@ export function OrderSuccessContent() {
           <p className="mb-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-sage">Đơn hàng {order.id}</p>
           <h1 className="mb-4 text-[clamp(2rem,8vw,2.75rem)] font-medium leading-[1.15] text-ink">Đặt hàng thành công!</h1>
           <p className="mx-auto max-w-xl text-[17px] leading-[1.65] text-body">
-            Cảm ơn {order.customer.name}. Hạt Lành đã tiếp nhận đơn và sẽ liên hệ xác nhận trước khi giao.
+            Cảm ơn {order.customer.name}. An Vị đã tiếp nhận đơn và sẽ liên hệ xác nhận trước khi giao.
           </p>
         </header>
 
@@ -64,7 +64,7 @@ export function OrderSuccessContent() {
         {order.paymentMethod === "bank" ? (
           <div className="mb-6 flex items-start gap-3 rounded-[14px] bg-ink p-5 text-white">
             <CircleDollarSign className="mt-0.5 h-6 w-6 shrink-0 text-[#d7e2cb]" />
-            <div><h2 className="font-semibold">Đơn hàng đang chờ chuyển khoản</h2><p className="mt-1 text-[14px] leading-6 text-white/75">Hạt Lành sẽ liên hệ qua {order.customer.phone} để gửi thông tin tài khoản. Chỉ chuyển khoản sau khi đã đối chiếu đúng mã đơn {order.id}.</p></div>
+            <div><h2 className="font-semibold">Đơn hàng đang chờ chuyển khoản</h2><p className="mt-1 text-[14px] leading-6 text-white/75">An Vị sẽ liên hệ qua {order.customer.phone} để gửi thông tin tài khoản. Chỉ chuyển khoản sau khi đã đối chiếu đúng mã đơn {order.id}.</p></div>
           </div>
         ) : null}
 

@@ -8,52 +8,52 @@ const db = drizzle(sql);
 const seedProducts = [
   {
     slug: "ngu-coc-truyen-thong",
-    name: "Ngũ cốc Hạt Lành Truyền Thống",
+    name: "Ngũ cốc An Vị Truyền Thống",
     shortName: "Truyền Thống",
     weight: "500g",
     price: 185000,
     description: "Hỗn hợp yến mạch, gạo lứt, đậu đỏ và hạt sen — công thức cổ điển cho bữa sáng dinh dưỡng mỗi ngày.",
     image: "/images/04_products/product-traditional-hd.jpg",
-    imageAlt: "Gói ngũ cốc Hạt Lành Truyền Thống bên bát ngũ cốc nguyên hạt",
+    imageAlt: "Gói ngũ cốc An Vị Truyền Thống bên bát ngũ cốc nguyên hạt",
     ingredients: ["Yến mạch", "Gạo lứt", "Đậu đỏ", "Hạt sen", "Hạt kê"],
     usage: "Cho 3–4 muỗng ngũ cốc vào tô, thêm sữa nóng hoặc nước ấm, khuấy đều và thưởng thức. Có thể thêm trái cây tươi hoặc mật ong.",
     storage: "Bảo quản nơi khô ráo, thoáng mát. Đậy kín sau khi mở.",
   },
   {
     slug: "ngu-coc-nang-luong",
-    name: "Ngũ cốc Hạt Lành Năng Lượng",
+    name: "Ngũ cốc An Vị Năng Lượng",
     shortName: "Năng Lượng",
     weight: "500g",
     price: 210000,
     description: "Yến mạch, hạt chia, hạnh nhân, hạt bí và óc chó — năng lượng dồi dào cho ngày dài hoạt động.",
     image: "/images/04_products/product-energy-hd.jpg",
-    imageAlt: "Gói ngũ cốc Hạt Lành Năng Lượng cùng các loại hạt dinh dưỡng",
+    imageAlt: "Gói ngũ cốc An Vị Năng Lượng cùng các loại hạt dinh dưỡng",
     ingredients: ["Yến mạch", "Hạt chia", "Hạnh nhân", "Hạt bí", "Óc chó"],
     usage: "Dùng 3–4 muỗng với sữa tươi hoặc sữa hạt. Phù hợp cho bữa sáng hoặc bữa phụ buổi chiều.",
     storage: "Bảo quản nơi khô ráo, thoáng mát. Đậy kín sau khi mở.",
   },
   {
     slug: "ngu-coc-dinh-duong",
-    name: "Ngũ cốc Hạt Lành Dinh Dưỡng",
+    name: "Ngũ cốc An Vị Dinh Dưỡng",
     shortName: "Dinh Dưỡng",
     weight: "350g",
     price: 165000,
     description: "Quinoa, hạt kê, hạt lanh, gạo lứt và đậu xanh — công thức cân bằng cho sức khỏe toàn diện.",
     image: "/images/04_products/product-nutrition-hd.jpg",
-    imageAlt: "Gói ngũ cốc Hạt Lành Dinh Dưỡng cạnh bát ngũ cốc và hạt",
+    imageAlt: "Gói ngũ cốc An Vị Dinh Dưỡng cạnh bát ngũ cốc và hạt",
     ingredients: ["Quinoa", "Hạt kê", "Hạt lanh", "Gạo lứt", "Đậu xanh"],
     usage: "Pha 3–4 muỗng với nước ấm hoặc sữa, khuấy đều. Có thể nấu cháo hoặc dùng như topping.",
     storage: "Bảo quản nơi khô ráo, thoáng mát. Đậy kín sau khi mở.",
   },
   {
     slug: "ngu-coc-nho-xinh",
-    name: "Ngũ cốc Hạt Lành Nhỏ Xinh",
+    name: "Ngũ cốc An Vị Nhỏ Xinh",
     shortName: "Nhỏ Xinh",
     weight: "200g",
     price: 98000,
     description: "Gói dùng thử — hỗn hợp ngũ cốc truyền thống, phù hợp để trải nghiệm lần đầu hoặc mang theo khi đi xa.",
     image: "/images/04_products/product-family-hd.jpg",
-    imageAlt: "Sản phẩm ngũ cốc Hạt Lành Nhỏ Xinh dành cho gia đình",
+    imageAlt: "Sản phẩm ngũ cốc An Vị Nhỏ Xinh dành cho gia đình",
     ingredients: ["Yến mạch", "Gạo lứt", "Đậu đỏ", "Hạt sen", "Hạt kê"],
     usage: "Dùng trọn gói với sữa nóng hoặc nước ấm. Tiện lợi cho 3–4 bữa sáng.",
     storage: "Bảo quản nơi khô ráo, thoáng mát.",
@@ -107,7 +107,7 @@ Hộp thủy tinh hoặc hộp nhựa có nắp kín là lựa chọn tốt nh�
 
 ## Thời hạn sử dụng
 
-Ngũ cốc Hạt Lành có hạn sử dụng ghi rõ trên bao bì. Sau khi mở, nên dùng trong vòng 30 ngày để đảm bảo hương vị tốt nhất.`,
+Ngũ cốc An Vị có hạn sử dụng ghi rõ trên bao bì. Sau khi mở, nên dùng trong vòng 30 ngày để đảm bảo hương vị tốt nhất.`,
   },
   {
     slug: "5-cong-thuc-ngu-coc-don-gian",
@@ -117,7 +117,7 @@ Ngũ cốc Hạt Lành có hạn sử dụng ghi rõ trên bao bì. Sau khi mở
     date: "2026-10-05",
     image: "/images/04_products/product-nutrition-hd.jpg",
     imageAlt: "Bát ngũ cốc với quả mọng và các loại hạt",
-    content: `Bận rộn không có nghĩa là phải bỏ qua bữa sáng. Với ngũ cốc Hạt Lành, bạn có thể chuẩn bị bữa ăn dinh dưỡng chỉ trong vài phút.
+    content: `Bận rộn không có nghĩa là phải bỏ qua bữa sáng. Với ngũ cốc An Vị, bạn có thể chuẩn bị bữa ăn dinh dưỡng chỉ trong vài phút.
 
 ## 1. Overnight oats
 

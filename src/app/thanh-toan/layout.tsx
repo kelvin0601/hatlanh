@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Thanh toán",
-  description: "Hoàn tất thông tin giao hàng và phương thức thanh toán cho đơn hàng Hạt Lành.",
+  description: "Hoàn tất thông tin giao hàng và phương thức thanh toán cho đơn hàng An Vị.",
   robots: { index: false, follow: false },
 };
 

@@ -15,11 +15,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const policy = getPolicyBySlug(slug);
-  if (!policy) return { title: "Chính sách | Hạt Lành" };
+  if (!policy) return { title: "Chính sách | An Vị" };
 
   return {
-    title: `${policy.title} | Hạt Lành`,
-    description: `${policy.title} — Chính sách của Hạt Lành, ngũ cốc thiên nhiên.`,
+    title: `${policy.title} | An Vị`,
+    description: `${policy.title} — Chính sách của An Vị, ngũ cốc thiên nhiên.`,
   };
 }
 

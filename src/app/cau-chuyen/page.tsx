@@ -3,11 +3,11 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Câu chuyện Hạt Lành | Hạt Lành — Ngũ cốc thiên nhiên",
+  title: "Câu chuyện An Vị | An Vị — Ngũ cốc thiên nhiên",
   description:
-    "Khởi nguồn từ tình yêu thiên nhiên và vùng quê Việt Nam, Hạt Lành mang đến ngũ cốc thiên nhiên cho bữa sáng an lành.",
+    "Khởi nguồn từ tình yêu thiên nhiên và vùng quê Việt Nam, An Vị mang đến ngũ cốc thiên nhiên cho bữa sáng an lành.",
   openGraph: {
-    title: "Câu chuyện Hạt Lành",
+    title: "Câu chuyện An Vị",
     description: "Khởi nguồn từ tình yêu thiên nhiên và vùng quê Việt Nam.",
     type: "website",
   },
@@ -26,10 +26,10 @@ export default function StoryPage() {
               className="text-ink leading-[1.12] tracking-[-0.035em] font-medium mb-6 text-center"
               style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.375rem, 11.3vw, 3rem)" }}
             >
-              Câu chuyện Hạt Lành
+              Câu chuyện An Vị
             </h1>
             <p className="text-body text-[17px] leading-[1.65] text-center max-w-xl mx-auto">
-              Gieo hạt lành, dưỡng thân tâm.
+              An vị mỗi ngày, dưỡng thân tâm.
             </p>
           </div>
         </div>
@@ -57,7 +57,7 @@ export default function StoryPage() {
                 Khởi nguồn
               </h2>
               <p className="text-body text-[17px] leading-[1.65] mb-4">
-                Hạt Lành bắt đầu từ một ước muốn giản dị — mang đến bữa sáng tự nhiên và
+                An Vị bắt đầu từ một ước muốn giản dị — mang đến bữa sáng tự nhiên và
                 an lành cho mọi gia đình Việt Nam.
               </p>
               <p className="text-body text-[17px] leading-[1.65]">
@@ -83,11 +83,11 @@ export default function StoryPage() {
                 Triết lý sống lành
               </h2>
               <p className="text-body text-[17px] leading-[1.65] mb-4">
-                &ldquo;Sống lành&rdquo; với Hạt Lành là sống chậm lại, biết ơn những điều nhỏ bé,
+                &ldquo;Sống lành&rdquo; với An Vị là sống chậm lại, biết ơn những điều nhỏ bé,
                 và chăm sóc bản thân bắt đầu từ những thói quen ăn uống lành mạnh.
               </p>
               <p className="text-body text-[17px] leading-[1.65]">
-                Mỗi sản phẩm Hạt Lành không chỉ là ngũ cốc — đó là lời nhắc nhở rằng
+                Mỗi sản phẩm An Vị không chỉ là ngũ cốc — đó là lời nhắc nhở rằng
                 mỗi ngày đều xứng đáng được bắt đầu một cách trọn vẹn.
               </p>
             </div>
@@ -115,7 +115,7 @@ export default function StoryPage() {
             Giá trị và cam kết
           </h2>
           <p className="text-body text-[17px] leading-[1.65] max-w-xl mx-auto mb-10">
-            Hạt Lành cam kết mang đến sản phẩm chất lượng, minh bạch và an toàn.
+            An Vị cam kết mang đến sản phẩm chất lượng, minh bạch và an toàn.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">

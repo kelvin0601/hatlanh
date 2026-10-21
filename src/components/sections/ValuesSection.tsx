@@ -16,7 +16,7 @@ export function ValuesSection() {
         style={{ width: "min(calc(100% - 2 * var(--page-gutter)), var(--container-max))" }}
       >
         <p className="text-sage text-[12px] font-semibold uppercase tracking-[0.14em] text-center mb-3">
-          Vì sao chọn Hạt Lành
+          Vì sao chọn An Vị
         </p>
         <h2
           className="text-ink leading-[1.13] tracking-[-0.025em] font-medium text-center mb-10 md:mb-14"

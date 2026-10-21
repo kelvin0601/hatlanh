@@ -20,7 +20,7 @@ export default function ContactPage() {
       });
       const result = (await response.json()) as { message?: string };
       if (!response.ok) throw new Error(result.message ?? "Chưa thể gửi lời nhắn.");
-      setFeedback({ type: "success", message: result.message ?? "Hạt Lành đã nhận lời nhắn của bạn." });
+      setFeedback({ type: "success", message: result.message ?? "An Vị đã nhận lời nhắn của bạn." });
       setForm({ name: "", email: "", phone: "", message: "" });
     } catch (error) {
       setFeedback({ type: "error", message: error instanceof Error ? error.message : "Đã có lỗi xảy ra." });
@@ -41,7 +41,7 @@ export default function ContactPage() {
               className="text-ink leading-[1.12] tracking-[-0.035em] font-medium mb-4"
               style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.375rem, 11.3vw, 3rem)" }}
             >
-              Liên hệ với Hạt Lành
+              Liên hệ với An Vị
             </h1>
             <p className="text-body text-[17px] leading-[1.65]">
               Bạn có câu hỏi, góp ý hoặc muốn hợp tác? Hãy gửi lời nhắn, chúng tôi sẽ phản hồi sớm nhất.
@@ -145,7 +145,7 @@ export default function ContactPage() {
                     <Mail className="w-5 h-5 text-forest mt-0.5" />
                     <div>
                       <p className="text-ink font-medium text-[15px]">Email</p>
-                      <a href="mailto:hello@hatlanh.vn" className="text-body text-[15px] hover:text-forest">hello@hatlanh.vn</a>
+                      <a href="mailto:hello@anvi.vn" className="text-body text-[15px] hover:text-forest">hello@anvi.vn</a>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
@@ -163,7 +163,7 @@ export default function ContactPage() {
                   Hợp tác và phân phối
                 </h2>
                 <p className="text-body text-[15px] leading-[1.65]">
-                  Bạn muốn phân phối sản phẩm Hạt Lành? Liên hệ qua email hoặc gửi lời nhắn, chúng tôi sẽ trao đổi chi tiết.
+                  Bạn muốn phân phối sản phẩm An Vị? Liên hệ qua email hoặc gửi lời nhắn, chúng tôi sẽ trao đổi chi tiết.
                 </p>
               </div>
             </div>

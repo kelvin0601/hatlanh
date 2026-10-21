@@ -38,7 +38,7 @@ export async function POST(request: Request) {
   }
 
   return noStoreJson({
-    message: emailStatus === "sent" ? "Hạt Lành đã nhận lời nhắn của bạn." : "Biểu mẫu hợp lệ nhưng email chưa được gửi vì website đang ở chế độ demo.",
+    message: emailStatus === "sent" ? "An Vị đã nhận lời nhắn của bạn." : "Biểu mẫu hợp lệ nhưng email chưa được gửi vì website đang ở chế độ demo.",
     emailStatus,
   });
 }

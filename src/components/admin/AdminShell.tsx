@@ -48,7 +48,7 @@ export function AdminShell({ children, user, csrfToken }: { children: React.Reac
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col bg-ink px-4 py-5 text-white lg:flex">
         <Link href="/admin" className="mb-8 flex min-h-12 items-center gap-3 px-3">
           <span className="grid h-10 w-10 place-items-center rounded-[12px] bg-white/10"><Leaf className="h-5 w-5" /></span>
-          <div><p className="font-semibold tracking-wide">Hạt Lành</p><p className="text-[11px] text-white/55">Trang quản trị</p></div>
+          <div><p className="font-semibold tracking-wide">An Vị</p><p className="text-[11px] text-white/55">Trang quản trị</p></div>
         </Link>
         <nav className="flex flex-1 flex-col gap-1" aria-label="Điều hướng quản trị">
           {allowedNavigation.map(({ href, label, icon: Icon, exact }) => {
@@ -61,7 +61,7 @@ export function AdminShell({ children, user, csrfToken }: { children: React.Reac
       </aside>
 
       <header className="sticky top-0 z-30 flex min-h-16 items-center justify-between border-b border-border bg-paper/95 px-4 backdrop-blur lg:hidden">
-        <Link href="/admin" className="flex items-center gap-2 font-semibold text-ink"><Leaf className="h-5 w-5 text-forest" /> Hạt Lành Admin</Link>
+        <Link href="/admin" className="flex items-center gap-2 font-semibold text-ink"><Leaf className="h-5 w-5 text-forest" /> An Vị Admin</Link>
         <button type="button" onClick={logout} className="grid h-11 w-11 place-items-center rounded-full text-muted hover:bg-sand" aria-label="Đăng xuất"><LogOut className="h-5 w-5" /></button>
       </header>
 

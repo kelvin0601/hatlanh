@@ -14,9 +14,9 @@ import { CheckCircle2, X } from "lucide-react";
 import type { CartLine, Order } from "@/lib/commerce";
 import type { Product } from "@/lib/products";
 
-const CART_KEY = "hat-lanh-cart-v1";
-const LEGACY_ORDERS_KEY = "hat-lanh-orders-v1";
-const LAST_ORDER_KEY = "hat-lanh-last-order-v1";
+const CART_KEY = "an-vi-cart-v1";
+const LEGACY_ORDERS_KEY = "an-vi-orders-v1";
+const LAST_ORDER_KEY = "an-vi-last-order-v1";
 const EMPTY_CART: CartLine[] = [];
 const cartListeners = new Set<() => void>();
 let cartSnapshot: CartLine[] | undefined;

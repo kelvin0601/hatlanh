@@ -1,4 +1,4 @@
-# Hạt Lành — Website Sitemap
+# An Vị — Website Sitemap
 
 > Phiên bản: 1.0 · Định hướng: Natural Cereal · Mobile-first · E-commerce + Brand Storytelling
 
@@ -13,7 +13,7 @@
 ## 2. Sitemap tổng thể
 
 ```text
-HẠT LÀNH /
+AN VỊ /
 ├── Trang chủ /
 │   ├── Hero video + CTA
 │   ├── Những hạt lành từ đất trời
@@ -28,7 +28,7 @@ HẠT LÀNH /
 │   ├── Danh mục (lọc theo query parameter)
 │   ├── Chi tiết sản phẩm /san-pham/[slug]
 │   └── Combo / quà tặng (danh mục khi có sản phẩm)
-├── Câu chuyện Hạt Lành /cau-chuyen
+├── Câu chuyện An Vị /cau-chuyen
 │   ├── Khởi nguồn thương hiệu
 │   ├── Triết lý sống lành
 │   ├── Giá trị & cam kết

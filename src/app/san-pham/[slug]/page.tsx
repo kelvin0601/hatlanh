@@ -26,14 +26,14 @@ export async function generateMetadata({
     description: product.description,
     keywords: [product.name, ...product.ingredients, "ngũ cốc thiên nhiên"],
     openGraph: {
-      title: `${product.name} | Hạt Lành`,
+      title: `${product.name} | An Vị`,
       description: product.description,
       type: "website",
       images: [{ url: product.image, alt: product.imageAlt }],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${product.name} | Hạt Lành`,
+      title: `${product.name} | An Vị`,
       description: product.description,
       images: [product.image],
     },

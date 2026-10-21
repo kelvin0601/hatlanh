@@ -1,4 +1,4 @@
-# HẠT LÀNH — Website Design System
+# AN VỊ — Website Design System
 
 > Version: 1.0 · Status: Proposed design baseline · Scope: responsive e-commerce website, starting with Homepage  
 > Design direction: **Modern Organic × Cinematic Commerce × Mindful Living**  
@@ -7,7 +7,7 @@
 
 ## 1. Product and experience principles
 
-Hạt Lành sells **natural mixed-grain cereals**, not only rice. The brand is inspired by Vietnamese countryside, gratitude, calm and care, expressed inclusively without religious iconography or claims of spiritual/medical treatment.
+An Vị sells **natural mixed-grain cereals**, not only rice. The brand is inspired by Vietnamese countryside, gratitude, calm and care, expressed inclusively without religious iconography or claims of spiritual/medical treatment.
 
 1. **Commerce first, storytelling throughout.** Shopping must remain accessible at any scroll position via header navigation/cart and clear product CTAs.
 2. **Calm, not empty.** Use generous negative space and concise copy; maintain useful product details.
@@ -145,9 +145,9 @@ Prefer **thin borders and negative space** over heavy card shadows. Organic curv
 | 01 | **Hero — Từ muôn hạt thiên nhiên, đến những ngày an nhiên** | Full-bleed cinematic media, left-aligned text overlay, primary shop CTA | Brand + immediate shopping entry | Muted autoplay loop |
 | 02 | **Muôn hạt, một sự hài hòa** | Airy ingredient grid / editorial collage on cream | Show multi-ingredient reality | Lightweight fade/reveal |
 | 03 | **Chuyện từ quê nhà** | Wide countryside documentary image/video + concise story | Emotional brand connection | Autoplay on viewport, optional |
-| 04 | **Ngũ cốc Hạt Lành** | Product grid with prices, weights, cart buttons | Conversion | Static photos + hover |
+| 04 | **Ngũ cốc An Vị** | Product grid with prices, weights, cart buttons | Conversion | Static photos + hover |
 | 05 | **Một chút an yên** | Large lifestyle breakfast media + short reflection | Mindful-living identity | Autoplay on viewport, optional |
-| 06 | **Điều Hạt Lành trân trọng** | 3–4 concise trust pillars | Confidence | Static icons |
+| 06 | **Điều An Vị trân trọng** | 3–4 concise trust pillars | Confidence | Static icons |
 | 07 | **Góc sống lành** | 2–3 editorial articles / recipes | Education + SEO | Gentle reveal |
 | 08 | **Newsletter + Footer** | Dark forest banner and functional footer | Retention + support | Minimal |
 
@@ -158,7 +158,7 @@ Prefer **thin borders and negative space** over heavy card shadows. Organic curv
 - Desktop: text within left **35–45%**, media focus right; use a gradient overlay on text area for reliable contrast.
 - Mobile: use a **stacked layout with HTML copy above a separate mobile crop/poster** by default. Keep text off the moving grains; see `design-mobile.md`.
 - Hero headline is HTML, **never embedded in AI video**.
-- CTAs: `Khám phá sản phẩm` (primary), `Câu chuyện Hạt Lành` (secondary).
+- CTAs: `Khám phá sản phẩm` (primary), `Câu chuyện An Vị` (secondary).
 - Do not place unverified `100% tự nhiên`, `không chất bảo quản`, or health claims in trust strips.
 
 ## 8. Video / motion system

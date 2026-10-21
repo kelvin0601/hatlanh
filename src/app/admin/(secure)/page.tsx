@@ -15,7 +15,7 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="mx-auto max-w-7xl">
-      <header className="mb-7"><p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-sage">Hạt Lành Admin</p><h1 className="mt-1 text-2xl font-semibold text-ink sm:text-3xl">Tổng quan cửa hàng</h1><p className="mt-2 text-[14px] text-muted">Theo dõi nội dung và hoạt động bán hàng tại một nơi.</p></header>
+      <header className="mb-7"><p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-sage">An Vị Admin</p><h1 className="mt-1 text-2xl font-semibold text-ink sm:text-3xl">Tổng quan cửa hàng</h1><p className="mt-2 text-[14px] text-muted">Theo dõi nội dung và hoạt động bán hàng tại một nơi.</p></header>
       <section className="grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label="Chỉ số cửa hàng">
         {stats.map(({ label, value, icon: Icon, tone }) => <article key={label} className="rounded-[14px] bg-paper p-4 sm:p-5"><span className={`mb-4 grid h-10 w-10 place-items-center rounded-[11px] ${tone}`}><Icon className="h-5 w-5" /></span><p className="break-words text-xl font-bold tabular-nums text-ink sm:text-2xl">{value}</p><p className="mt-1 text-[12px] leading-5 text-muted sm:text-[13px]">{label}</p></article>)}
       </section>

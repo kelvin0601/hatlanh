@@ -73,7 +73,7 @@ export async function ProductsSection() {
               <div className="p-3 md:p-4 flex flex-col gap-1">
                 <Link href={`/san-pham/${product.slug}`}>
                   <h3 className="text-ink font-semibold text-[15px] md:text-[16px] leading-[1.35] line-clamp-1 hover:text-forest transition-colors">
-                    {product.name.replace("Ngũ cốc Hạt Lành ", "")}
+                    {product.name.replace("Ngũ cốc An Vị ", "")}
                   </h3>
                 </Link>
                 <p className="text-muted text-[13px] leading-[1.4] line-clamp-1">

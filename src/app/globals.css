@@ -80,12 +80,41 @@ body:has(.admin-root) {
 }
 
 :focus-visible {
-  outline: 3px solid var(--color-wheat);
-  outline-offset: 3px;
+  outline: 2px solid var(--color-sage);
+  outline-offset: 2px;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-cream), 0 0 0 4px var(--color-sage);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--color-sage);
+  outline-offset: 2px;
+}
+
+[role="dialog"] input:focus-visible {
+  outline: none;
+  box-shadow: none;
 }
 
 button, a, input, textarea, select {
   touch-action: manipulation;
+}
+
+:where(button, a) {
+  transition-property: color, background-color, border-color, box-shadow, outline-color, text-decoration-color, fill, stroke;
+  transition-duration: 200ms;
+  transition-timing-function: ease;
+}
+
+:where(input, textarea, select) {
+  transition-property: border-color, box-shadow;
+  transition-duration: 200ms;
+  transition-timing-function: ease;
 }
 
 .t-panel-slide {

@@ -87,7 +87,7 @@ export function HeroSection() {
               variant="outline-light"
               size="lg"
             >
-              Câu chuyện Hạt Lành
+              Câu chuyện An Vị
             </ButtonLink>
           </div>
         </div>

@@ -21,7 +21,7 @@ async function sendEmail(to: string[], subject: string, html: string) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: process.env.ORDER_FROM_EMAIL ?? "Hạt Lành <orders@hatlanh.vn>",
+      from: process.env.ORDER_FROM_EMAIL ?? "An Vị <orders@anvi.vn>",
       to,
       subject,
       html,
@@ -44,13 +44,13 @@ function orderRows(order: Order) {
 
 function customerOrderEmail(order: Order) {
   const paymentNote = order.paymentMethod === "bank"
-    ? "Đơn hàng đang chờ chuyển khoản. Hạt Lành sẽ liên hệ để gửi thông tin thanh toán và xác nhận giao hàng."
-    : "Bạn sẽ thanh toán khi nhận hàng. Hạt Lành sẽ liên hệ xác nhận trước khi giao.";
+    ? "Đơn hàng đang chờ chuyển khoản. An Vị sẽ liên hệ để gửi thông tin thanh toán và xác nhận giao hàng."
+    : "Bạn sẽ thanh toán khi nhận hàng. An Vị sẽ liên hệ xác nhận trước khi giao.";
 
   return `
     <div style="margin:0;background:#f8f4ea;padding:32px 16px;font-family:Arial,sans-serif;color:#4d564b">
       <div style="max-width:600px;margin:0 auto;background:#fffcf6;border-radius:16px;padding:32px">
-        <p style="margin:0 0 8px;color:#798b6c;font-size:12px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase">Hạt Lành</p>
+        <p style="margin:0 0 8px;color:#798b6c;font-size:12px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase">An Vị</p>
         <h1 style="margin:0 0 16px;color:#213728;font-family:Georgia,serif;font-size:28px">Cảm ơn bạn đã đặt hàng</h1>
         <p>Xin chào ${escapeHtml(order.customer.name)}, đơn hàng <strong>${order.id}</strong> đã được tiếp nhận.</p>
         <table style="width:100%;border-collapse:collapse;margin:24px 0">${orderRows(order)}</table>
@@ -80,7 +80,7 @@ export async function sendOrderEmails(order: Order): Promise<Order["emailStatus"
 
   try {
     const recipients = [
-      sendEmail([order.customer.email], `Hạt Lành đã nhận đơn ${order.id}`, customerOrderEmail(order)),
+      sendEmail([order.customer.email], `An Vị đã nhận đơn ${order.id}`, customerOrderEmail(order)),
     ];
     const storeEmail = process.env.STORE_NOTIFICATION_EMAIL;
     if (storeEmail) recipients.push(sendEmail([storeEmail], `Đơn hàng mới ${order.id}`, adminOrderEmail(order)));

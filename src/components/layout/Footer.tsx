@@ -6,7 +6,7 @@ import { ChevronDown, Phone, Mail, MapPin } from "lucide-react";
 
 const footerGroups = [
   {
-    title: "Về Hạt Lành",
+    title: "Về An Vị",
     links: [
       { label: "Câu chuyện thương hiệu", href: "/cau-chuyen" },
       { label: "Từ nông trại", href: "/tu-nong-trai" },
@@ -85,11 +85,11 @@ export function Footer() {
                 <path d="M14 23V11M14 11C12 13 10 14 8 14.5M14 11c2 2 4 3 6 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
               </svg>
               <span className="text-white text-lg font-semibold tracking-tight uppercase" style={{ fontFamily: "var(--font-display)", letterSpacing: "0.05em" }}>
-                Hạt Lành
+                An Vị
               </span>
             </Link>
             <p className="text-white/50 text-[13px] leading-relaxed mb-5">
-              Gieo hạt lành, dưỡng thân tâm.
+              An vị mỗi ngày, dưỡng thân tâm.
             </p>
 
             {/* Social icons */}
@@ -121,7 +121,7 @@ export function Footer() {
             <Phone className="w-4 h-4" /> 028 7300 0888
           </div>
           <div className="flex items-center gap-2.5 text-white/60 text-[13px]">
-            <Mail className="w-4 h-4" /> info@hatlanh.vn
+            <Mail className="w-4 h-4" /> info@anvi.vn
           </div>
           <div className="flex items-center gap-2.5 text-white/60 text-[13px]">
             <MapPin className="w-4 h-4" /> Số 123, Xã..., Huyện..., Việt Nam
@@ -130,7 +130,7 @@ export function Footer() {
 
         {/* Bottom */}
         <div className="border-t border-white/10 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-[13px] text-white/40">
-          <p>&copy; 2026 Hạt Lành. All rights reserved.</p>
+          <p>&copy; 2026 An Vị. All rights reserved.</p>
           <div className="flex items-center gap-5">
             <Link href="/chinh-sach/dieu-khoan-su-dung" className="hover:text-white/70 transition-colors">Điều khoản sử dụng</Link>
             <Link href="/chinh-sach/bao-mat" className="hover:text-white/70 transition-colors">Chính sách bảo mật</Link>

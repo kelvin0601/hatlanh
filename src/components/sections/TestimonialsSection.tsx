@@ -7,7 +7,7 @@ const testimonials = [
     location: "Hà Nội",
   },
   {
-    quote: "Sản phẩm chất lượng, giao hàng nhanh. Tôi đặc biệt thích câu chuyện và cách Hạt Lành làm việc.",
+    quote: "Sản phẩm chất lượng, giao hàng nhanh. Tôi đặc biệt thích câu chuyện và cách An Vị làm việc.",
     name: "Trần Văn Minh",
     location: "TP. Hồ Chí Minh",
   },
@@ -26,7 +26,7 @@ export function TestimonialsSection() {
         style={{ width: "min(calc(100% - 2 * var(--page-gutter)), var(--container-max))" }}
       >
         <p className="text-sage text-[12px] font-semibold uppercase tracking-[0.14em] mb-3">
-          Khách hàng nói về Hạt Lành
+          Khách hàng nói về An Vị
         </p>
         <h2
           className="text-ink leading-[1.13] tracking-[-0.025em] font-medium mb-10 md:mb-12"

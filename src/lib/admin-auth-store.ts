@@ -62,7 +62,7 @@ async function verifyPassword(password: string, encoded: string) {
   const salt = legacy ? parts[1] : parts[2];
   const expected = legacy ? parts[2] : parts[3];
   if (algorithm !== "scrypt" || !salt || !expected || ![16_384, 32_768].includes(cost)) {
-    await derivePassword(password || "invalid", "hat-lanh-invalid-password");
+    await derivePassword(password || "invalid", "an-vi-invalid-password");
     return false;
   }
   return safeEqual(await derivePassword(password, salt, cost), expected);
@@ -87,7 +87,7 @@ function toDto(user: typeof schema.adminUsers.$inferSelect): AdminUserDto {
 export async function loginAdmin(usernameInput: string, password: string) {
   const username = usernameInput.trim().toLowerCase();
   if (!USERNAME_PATTERN.test(username) || !password || password.length > 128 || !getSecret()) {
-    await derivePassword(password || "invalid", "hat-lanh-invalid-password");
+    await derivePassword(password || "invalid", "an-vi-invalid-password");
     return null;
   }
 
@@ -116,7 +116,7 @@ export async function loginAdmin(usernameInput: string, password: string) {
   }
 
   if (!user) {
-    await derivePassword(password, "hat-lanh-invalid-password");
+    await derivePassword(password, "an-vi-invalid-password");
     return null;
   }
 

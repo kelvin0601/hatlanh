@@ -3,12 +3,12 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Từ nông trại — Nguồn gốc nguyên liệu | Hạt Lành",
+  title: "Từ nông trại — Nguồn gốc nguyên liệu | An Vị",
   description:
-    "Tìm hiểu về nguồn gốc nguyên liệu, vùng trồng và hành trình từ nông trại đến bàn ăn của ngũ cốc Hạt Lành.",
+    "Tìm hiểu về nguồn gốc nguyên liệu, vùng trồng và hành trình từ nông trại đến bàn ăn của ngũ cốc An Vị.",
   openGraph: {
-    title: "Từ nông trại — Nguồn gốc nguyên liệu | Hạt Lành",
-    description: "Hành trình từ nông trại đến bàn ăn của ngũ cốc Hạt Lành.",
+    title: "Từ nông trại — Nguồn gốc nguyên liệu | An Vị",
+    description: "Hành trình từ nông trại đến bàn ăn của ngũ cốc An Vị.",
     type: "website",
   },
 };
@@ -40,7 +40,7 @@ export default function FarmPage() {
               Từ nông trại đến bàn ăn
             </h1>
             <p className="text-body text-[17px] leading-[1.65] max-w-xl mx-auto">
-              Mỗi hạt ngũ cốc trong sản phẩm Hạt Lành đều được chọn lọc kỹ lưỡng,
+              Mỗi hạt ngũ cốc trong sản phẩm An Vị đều được chọn lọc kỹ lưỡng,
               đảm bảo chất lượng từ nguồn nguyên liệu đến tay bạn.
             </p>
           </div>
@@ -56,7 +56,7 @@ export default function FarmPage() {
             className="text-ink leading-[1.18] tracking-[-0.025em] font-medium mb-10 text-center"
             style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.875rem, 8.5vw, 2.25rem)" }}
           >
-            Các loại hạt trong ngũ cốc Hạt Lành
+            Các loại hạt trong ngũ cốc An Vị
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -127,7 +127,7 @@ export default function FarmPage() {
             className="text-ink leading-[1.18] tracking-[-0.025em] font-medium mb-5"
             style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.875rem, 8.5vw, 2.25rem)" }}
           >
-            Trải nghiệm ngũ cốc Hạt Lành
+            Trải nghiệm ngũ cốc An Vị
           </h2>
           <p className="text-body text-[17px] leading-[1.65] max-w-xl mx-auto mb-8">
             Khám phá các sản phẩm ngũ cốc thiên nhiên, được chế biến tận tâm từ những hạt ngũ cốc tốt nhất.

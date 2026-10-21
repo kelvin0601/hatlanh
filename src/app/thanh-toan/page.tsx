@@ -123,7 +123,7 @@ export default function CheckoutPage() {
               <div className="flex flex-col gap-3">
                 {[
                   { value: "cod" as const, icon: WalletCards, label: "Thanh toán khi nhận hàng (COD)", description: "Thanh toán tiền mặt hoặc chuyển khoản cho người giao hàng." },
-                  { value: "bank" as const, icon: Building2, label: "Chuyển khoản ngân hàng", description: "Hạt Lành sẽ liên hệ và gửi thông tin chuyển khoản sau khi nhận đơn." },
+                  { value: "bank" as const, icon: Building2, label: "Chuyển khoản ngân hàng", description: "An Vị sẽ liên hệ và gửi thông tin chuyển khoản sau khi nhận đơn." },
                 ].map((option) => (
                   <label key={option.value} className={`flex cursor-pointer items-start gap-3 rounded-[12px] border p-4 transition-colors ${paymentMethod === option.value ? "border-forest bg-forest/5" : "border-border hover:border-sage"}`}>
                     <input type="radio" name="payment" value={option.value} checked={paymentMethod === option.value} onChange={() => setPaymentMethod(option.value)} className="mt-1 h-5 w-5 accent-forest" />

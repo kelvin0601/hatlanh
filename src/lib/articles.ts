@@ -56,7 +56,7 @@ Hộp thủy tinh hoặc hộp nhựa có nắp kín là lựa chọn tốt nh�
 
 ## Thời hạn sử dụng
 
-Ngũ cốc Hạt Lành có hạn sử dụng ghi rõ trên bao bì. Sau khi mở, nên dùng trong vòng 30 ngày để đảm bảo hương vị tốt nhất.`,
+Ngũ cốc An Vị có hạn sử dụng ghi rõ trên bao bì. Sau khi mở, nên dùng trong vòng 30 ngày để đảm bảo hương vị tốt nhất.`,
   },
   {
     slug: "5-cong-thuc-ngu-coc-don-gian",
@@ -66,7 +66,7 @@ Ngũ cốc Hạt Lành có hạn sử dụng ghi rõ trên bao bì. Sau khi mở
     date: "2026-10-05",
     image: "/images/04_products/product-nutrition-hd.jpg",
     imageAlt: "Bát ngũ cốc với quả mọng và các loại hạt",
-    content: `Bận rộn không có nghĩa là phải bỏ qua bữa sáng. Với ngũ cốc Hạt Lành, bạn có thể chuẩn bị bữa ăn dinh dưỡng chỉ trong vài phút.
+    content: `Bận rộn không có nghĩa là phải bỏ qua bữa sáng. Với ngũ cốc An Vị, bạn có thể chuẩn bị bữa ăn dinh dưỡng chỉ trong vài phút.
 
 ## 1. Overnight oats
 

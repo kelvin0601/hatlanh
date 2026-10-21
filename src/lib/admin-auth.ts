@@ -7,8 +7,8 @@ import { hasPermission } from "@/lib/admin-permissions";
 import { findAdminSession, isAdminAuthConfigured } from "@/lib/admin-auth-store";
 import { noStoreJson, verifySameOrigin } from "@/lib/request-security";
 
-const LOCAL_COOKIE_NAME = "hat_lanh_session";
-const PRODUCTION_COOKIE_NAME = "__Host-hat_lanh_session";
+const LOCAL_COOKIE_NAME = "an_vi_session";
+const PRODUCTION_COOKIE_NAME = "__Host-an_vi_session";
 
 export function getAdminCookieName() {
   return process.env.NODE_ENV === "production" ? PRODUCTION_COOKIE_NAME : LOCAL_COOKIE_NAME;
