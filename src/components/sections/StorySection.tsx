@@ -1,15 +1,16 @@
 import Image from "next/image";
 import { Play } from "lucide-react";
 import { ButtonLink } from "@/components/ui/ButtonLink";
+import type { SiteContent } from "@/lib/site-content";
 
-export function StorySection() {
+export function StorySection({ content }: { content: SiteContent }) {
   return (
     <section className="relative overflow-hidden" style={{ minHeight: "480px" }}>
       {/* Full-width countryside background */}
       <div className="absolute inset-0">
         <Image
-          src="/images/03_story/farmer-banner-hd.jpg"
-          alt="Người nông dân giữa vùng nguyên liệu xanh"
+          src={content.storyImage}
+          alt={content.storyImageAlt}
           fill
           sizes="100vw"
           className="object-cover object-center"
@@ -32,25 +33,20 @@ export function StorySection() {
       >
         <div className="max-w-[480px]">
           <p className="text-white/75 text-[12px] font-semibold uppercase tracking-[0.14em] mb-4">
-            Câu chuyện An Vị
+            {content.storyEyebrow}
           </p>
           <h2
             className="text-white leading-[1.08] tracking-[-0.025em] font-medium mb-5"
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: "clamp(1.875rem, 4vw, 3.5rem)",
+              fontSize: "var(--text-section-title)",
               color: "white",
             }}
           >
-            Từ những
-            <br />
-            miền quê
-            <br />
-            bình dị
+            <span className="whitespace-pre-line">{content.storyTitle}</span>
           </h2>
           <p className="text-white/90 text-[16px] md:text-[17px] leading-[1.7] mb-8 max-w-[400px]">
-            Chúng tôi tin rằng mỗi hạt ngũ cốc đều mang trong mình tinh túy của đất trời,
-            sự chăm chút của người nông dân và giá trị của một lối sống lành mạnh, gần gũi.
+            {content.storyBody}
           </p>
           <ButtonLink
             href="/cau-chuyen"

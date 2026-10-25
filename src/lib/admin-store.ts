@@ -2,13 +2,14 @@ import "server-only";
 
 import { db } from "@/lib/db";
 import * as schema from "@/lib/schema";
-import { eq, and, desc, sql } from "drizzle-orm";
-import type { Product } from "@/lib/products";
+import { eq, and, desc, inArray, sql } from "drizzle-orm";
+import { DEFAULT_PRODUCT_CATEGORY, isProductCategory, type Product, type ProductCategoryDefinition } from "@/lib/products";
 import type { Article } from "@/lib/articles";
-import type { Order, OrderItem } from "@/lib/commerce";
+import type { Order } from "@/lib/commerce";
 import { cacheLife, cacheTag, revalidateTag } from "next/cache";
 import { requireAdminSession } from "@/lib/admin-auth";
 import type { AdminPermission } from "@/lib/admin-permissions";
+import type { ProductIngredientDefinition } from "@/lib/product-ingredients";
 
 export interface StoreData {
   products: Product[];
@@ -23,6 +24,7 @@ function toProduct(row: typeof schema.products.$inferSelect): Product {
     slug: row.slug,
     name: row.name,
     shortName: row.shortName,
+    category: isProductCategory(row.category) ? row.category : DEFAULT_PRODUCT_CATEGORY,
     weight: row.weight,
     price: row.price,
     description: row.description,
@@ -138,6 +140,27 @@ export async function getStoreProducts(): Promise<Product[]> {
   return rows.map(toProduct);
 }
 
+export async function getProductCategories(): Promise<ProductCategoryDefinition[]> {
+  "use cache";
+  cacheLife("max");
+  cacheTag("an-vi-store");
+  const rows = await db.select().from(schema.productCategories).orderBy(schema.productCategories.createdAt);
+  return rows.map(toProductCategory);
+}
+
+export async function getStoreProductCategory(value: string): Promise<ProductCategoryDefinition | undefined> {
+  const categories = await getProductCategories();
+  return categories.find((category) => category.value === value);
+}
+
+export async function getProductIngredients(): Promise<ProductIngredientDefinition[]> {
+  "use cache";
+  cacheLife("max");
+  cacheTag("an-vi-store");
+  const rows = await db.select().from(schema.productIngredients).orderBy(schema.productIngredients.name);
+  return rows.map(toProductIngredient);
+}
+
 export async function getStoreArticles(): Promise<Article[]> {
   "use cache";
   cacheLife("max");
@@ -242,11 +265,100 @@ export async function updateOrderEmailStatus(orderId: string, emailStatus: Order
 
 // --- Admin CRUD operations (used by admin data API) ---
 
+export async function productCategoryExists(value: string): Promise<boolean> {
+  const rows = await db.select({ value: schema.productCategories.value }).from(schema.productCategories).where(eq(schema.productCategories.value, value)).limit(1);
+  return rows.length > 0;
+}
+
+export async function createProductCategory(data: ProductCategoryDefinition): Promise<ProductCategoryDefinition> {
+  const existing = await db
+    .select({ value: schema.productCategories.value })
+    .from(schema.productCategories)
+    .where(sql`${schema.productCategories.value} = ${data.value} OR lower(${schema.productCategories.label}) = lower(${data.label})`)
+    .limit(1);
+  if (existing.length > 0) throw new Error("Danh mục đã tồn tại.");
+  const rows = await db.insert(schema.productCategories).values(data).returning();
+  invalidateStore();
+  return toProductCategory(rows[0]);
+}
+
+export async function updateProductCategory(value: string, data: Omit<ProductCategoryDefinition, "value">): Promise<ProductCategoryDefinition> {
+  const duplicate = await db.select({ value: schema.productCategories.value }).from(schema.productCategories).where(sql`${schema.productCategories.value} != ${value} AND lower(${schema.productCategories.label}) = lower(${data.label})`).limit(1);
+  if (duplicate.length > 0) throw new Error("Tên danh mục đã tồn tại.");
+  const rows = await db.update(schema.productCategories).set({ label: data.label, description: data.description, image: data.image || null, imageAlt: data.imageAlt || null }).where(eq(schema.productCategories.value, value)).returning();
+  if (rows.length === 0) throw new Error("Không tìm thấy danh mục.");
+  invalidateStore();
+  return toProductCategory(rows[0]);
+}
+
+export async function deleteProductCategory(value: string): Promise<ProductCategoryDefinition> {
+  const used = await db.select({ id: schema.products.id }).from(schema.products).where(eq(schema.products.category, value)).limit(1);
+  if (used.length > 0) throw new Error("Danh mục đang được sản phẩm sử dụng nên chưa thể xóa.");
+  const rows = await db.delete(schema.productCategories).where(eq(schema.productCategories.value, value)).returning();
+  if (rows.length === 0) throw new Error("Không tìm thấy danh mục.");
+  invalidateStore();
+  return toProductCategory(rows[0]);
+}
+
+export async function productIngredientsExist(names: string[]): Promise<boolean> {
+  if (names.length === 0) return false;
+  const rows = await db.select({ name: schema.productIngredients.name }).from(schema.productIngredients).where(inArray(schema.productIngredients.name, names));
+  const existing = new Set(rows.map((row) => row.name));
+  return names.every((name) => existing.has(name));
+}
+
+export async function createProductIngredient(data: ProductIngredientDefinition): Promise<ProductIngredientDefinition> {
+  const existing = await db
+    .select({ name: schema.productIngredients.name })
+    .from(schema.productIngredients)
+    .where(sql`lower(${schema.productIngredients.name}) = lower(${data.name})`)
+    .limit(1);
+  if (existing.length > 0) throw new Error("Nguyên liệu đã tồn tại.");
+  const rows = await db.insert(schema.productIngredients).values({ name: data.name, image: data.image || null, imageAlt: data.imageAlt || null }).returning();
+  invalidateStore();
+  return toProductIngredient(rows[0]);
+}
+
+export async function updateProductIngredient(currentName: string, data: ProductIngredientDefinition): Promise<ProductIngredientDefinition> {
+  const duplicate = await db.select({ name: schema.productIngredients.name }).from(schema.productIngredients).where(sql`${schema.productIngredients.name} != ${currentName} AND lower(${schema.productIngredients.name}) = lower(${data.name})`).limit(1);
+  if (duplicate.length > 0) throw new Error("Tên nguyên liệu đã tồn tại.");
+
+  await db.execute(sql`
+    WITH updated_ingredient AS (
+      UPDATE "product_ingredients"
+      SET "name" = ${data.name}, "image" = ${data.image || null}, "image_alt" = ${data.imageAlt || null}
+      WHERE "name" = ${currentName}
+      RETURNING "name"
+    ), updated_products AS (
+      UPDATE "products"
+      SET "ingredients" = array_replace("ingredients", ${currentName}, ${data.name})
+      WHERE ${currentName} = ANY("ingredients")
+        AND EXISTS (SELECT 1 FROM updated_ingredient)
+      RETURNING "id"
+    )
+    SELECT "name" FROM updated_ingredient
+  `);
+  const rows = await db.select().from(schema.productIngredients).where(eq(schema.productIngredients.name, data.name)).limit(1);
+  if (rows.length === 0) throw new Error("Không tìm thấy nguyên liệu.");
+  invalidateStore();
+  return toProductIngredient(rows[0]);
+}
+
+export async function deleteProductIngredient(name: string): Promise<ProductIngredientDefinition> {
+  const used = await db.select({ id: schema.products.id }).from(schema.products).where(sql`${name} = ANY(${schema.products.ingredients})`).limit(1);
+  if (used.length > 0) throw new Error("Nguyên liệu đang được sản phẩm sử dụng nên chưa thể xóa.");
+  const rows = await db.delete(schema.productIngredients).where(eq(schema.productIngredients.name, name)).returning();
+  if (rows.length === 0) throw new Error("Không tìm thấy nguyên liệu.");
+  invalidateStore();
+  return toProductIngredient(rows[0]);
+}
+
 export async function createProduct(data: Omit<Product, "id">): Promise<Product> {
   const rows = await db.insert(schema.products).values({
     slug: data.slug,
     name: data.name,
     shortName: data.shortName,
+    category: data.category,
     weight: data.weight,
     price: data.price,
     description: data.description,
@@ -265,6 +377,7 @@ export async function updateProduct(id: number, data: Omit<Product, "id">): Prom
     slug: data.slug,
     name: data.name,
     shortName: data.shortName,
+    category: data.category,
     weight: data.weight,
     price: data.price,
     description: data.description,
@@ -360,4 +473,24 @@ export async function articleSlugExists(slug: string, excludeSlug?: string): Pro
     : eq(schema.articles.slug, slug);
   const rows = await db.select({ id: schema.articles.id }).from(schema.articles).where(condition).limit(1);
   return rows.length > 0;
+}
+
+function toProductCategory(row: typeof schema.productCategories.$inferSelect): ProductCategoryDefinition {
+  return { value: row.value, label: row.label, description: row.description, image: row.image ?? undefined, imageAlt: row.imageAlt ?? undefined };
+}
+
+function toProductIngredient(row: typeof schema.productIngredients.$inferSelect): ProductIngredientDefinition {
+  return { name: row.name, image: row.image ?? undefined, imageAlt: row.imageAlt ?? undefined };
+}
+
+export async function isImageInUse(imageUrl: string): Promise<boolean> {
+  const [productRows, articleRows, orderItemRows, categoryRows, ingredientRows, pageRows] = await Promise.all([
+    db.select({ id: schema.products.id }).from(schema.products).where(eq(schema.products.image, imageUrl)).limit(1),
+    db.select({ id: schema.articles.id }).from(schema.articles).where(eq(schema.articles.image, imageUrl)).limit(1),
+    db.select({ id: schema.orderItems.id }).from(schema.orderItems).where(eq(schema.orderItems.image, imageUrl)).limit(1),
+    db.select({ value: schema.productCategories.value }).from(schema.productCategories).where(eq(schema.productCategories.image, imageUrl)).limit(1),
+    db.select({ name: schema.productIngredients.name }).from(schema.productIngredients).where(eq(schema.productIngredients.image, imageUrl)).limit(1),
+    db.select({ content: schema.sitePages.content }).from(schema.sitePages),
+  ]);
+  return productRows.length > 0 || articleRows.length > 0 || orderItemRows.length > 0 || categoryRows.length > 0 || ingredientRows.length > 0 || pageRows.some((row) => Object.values(row.content).includes(imageUrl));
 }

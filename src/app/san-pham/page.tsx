@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { getStoreProducts } from "@/lib/admin-store";
-import { ProductFilter } from "@/components/commerce/ProductFilter";
+import { getProductCategories, getProductIngredients, getStoreProducts } from "@/lib/admin-store";
+import { ProductListing } from "@/components/commerce/ProductListing";
 
 export const metadata: Metadata = {
   title: "Sản phẩm ngũ cốc thiên nhiên",
@@ -20,28 +20,14 @@ export const metadata: Metadata = {
 };
 
 export default async function ProductListPage() {
-  const products = await getStoreProducts();
+  const [products, categories, ingredients] = await Promise.all([getStoreProducts(), getProductCategories(), getProductIngredients()]);
   return (
-    <section className="bg-cream" style={{ paddingBlock: "var(--section-space)" }}>
-      <div
-        className="mx-auto"
-        style={{ width: "min(calc(100% - 2 * var(--page-gutter)), var(--container-max))" }}
-      >
-        <div className="max-w-2xl mb-10 md:mb-14">
-          <h1
-            className="text-ink leading-[1.12] tracking-[-0.035em] font-medium mb-4"
-            style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.375rem, 11.3vw, 3rem)" }}
-          >
-            Ngũ cốc An Vị
-          </h1>
-          <p className="text-body text-[17px] leading-[1.65]">
-            Mỗi gói ngũ cốc là sự kết hợp hài hòa từ nhiều loại hạt thiên nhiên, mang đến nguồn
-            dinh dưỡng trọn vẹn cho bữa sáng mỗi ngày.
-          </p>
-        </div>
-
-        <ProductFilter products={products} />
-      </div>
-    </section>
+    <ProductListing
+      title="Ngũ cốc An Vị"
+      description="Mỗi gói ngũ cốc là sự kết hợp hài hòa từ nhiều loại hạt thiên nhiên, mang đến nguồn dinh dưỡng trọn vẹn cho bữa sáng mỗi ngày."
+      allProducts={products}
+      categoryOptions={categories}
+      ingredientOptions={ingredients}
+    />
   );
 }

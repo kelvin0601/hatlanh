@@ -1,11 +1,12 @@
 import type { MetadataRoute } from "next";
 import { policies } from "@/lib/policies";
-import { getStoreArticles, getStoreProducts } from "@/lib/admin-store";
+import { getCategoryHref } from "@/lib/product-categories";
+import { getProductCategories, getStoreArticles, getStoreProducts } from "@/lib/admin-store";
 
 const BASE_URL = "https://anvi.vn";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [products, articles] = await Promise.all([getStoreProducts(), getStoreArticles()]);
+  const [products, articles, categories] = await Promise.all([getStoreProducts(), getStoreArticles(), getProductCategories()]);
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE_URL, lastModified: new Date(), changeFrequency: "weekly", priority: 1.0 },
     { url: `${BASE_URL}/san-pham`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.9 },
@@ -14,6 +15,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/goc-song-lanh`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE_URL}/lien-he`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
   ];
+
+  const categoryPages: MetadataRoute.Sitemap = categories.filter((c) =>
+    products.some((p) => p.category === c.value),
+  ).map((c) => ({
+    url: `${BASE_URL}${getCategoryHref(c.value)}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly",
+    priority: 0.8,
+  }));
 
   const productPages: MetadataRoute.Sitemap = products.map((p) => ({
     url: `${BASE_URL}/san-pham/${p.slug}`,
@@ -36,5 +46,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.3,
   }));
 
-  return [...staticPages, ...productPages, ...articlePages, ...policyPages];
+  return [...staticPages, ...categoryPages, ...productPages, ...articlePages, ...policyPages];
 }

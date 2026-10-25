@@ -7,7 +7,7 @@ import { AddToCartButton } from "@/components/commerce/AddToCartButton";
 
 export function ProductCard({ product }: { product: Product }) {
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-[14px] bg-paper transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-soft)]">
+    <article className="group flex h-full flex-col overflow-hidden rounded-[14px] bg-paper transition-shadow duration-300 hover:shadow-[var(--shadow-soft)]">
       <Link href={`/san-pham/${product.slug}`} className="relative block aspect-[4/5] overflow-hidden bg-sand">
         <Image
           src={product.image}

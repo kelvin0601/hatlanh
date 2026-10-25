@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 export default async function BlogListPage() {
   const articles = await getStoreArticles();
   return (
-    <section className="bg-cream" style={{ paddingBlock: "var(--section-space)" }}>
+    <section className="bg-cream" style={{ paddingTop: "var(--hero-space)", paddingBottom: "var(--section-space)" }}>
       <div
         className="mx-auto"
         style={{ width: "min(calc(100% - 2 * var(--page-gutter)), var(--container-max))" }}

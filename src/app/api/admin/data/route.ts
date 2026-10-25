@@ -10,14 +10,17 @@ import {
   deleteArticle,
   updateOrderStatus,
   productSlugExists,
+  productCategoryExists,
+  productIngredientsExist,
   articleSlugExists,
 } from "@/lib/admin-store";
 import type { AdminPermission } from "@/lib/admin-permissions";
 import { hasPermission } from "@/lib/admin-permissions";
 import { noStoreJson, verifyJsonRequest } from "@/lib/request-security";
-import type { Product } from "@/lib/products";
+import { isProductCategory, type Product } from "@/lib/products";
 import type { Article } from "@/lib/articles";
 import type { OrderStatus, PaymentStatus } from "@/lib/commerce";
+import { isAllowedImageUrl } from "@/lib/r2-storage";
 
 type Resource = "products" | "articles" | "orders";
 const ORDER_STATUSES = new Set<OrderStatus>(["confirmed", "processing", "shipping", "completed", "cancelled"]);
@@ -44,6 +47,7 @@ function parseProduct(value: unknown): Omit<Product, "id"> | null {
   const slug = text(item.slug, 100);
   const name = text(item.name, 120);
   const shortName = text(item.shortName, 60);
+  const category = item.category;
   const weight = text(item.weight, 30);
   const description = text(item.description, 500);
   const image = text(item.image, 300);
@@ -52,8 +56,8 @@ function parseProduct(value: unknown): Omit<Product, "id"> | null {
   const storage = text(item.storage, 400);
   const price = Number(item.price);
   const ingredients = Array.isArray(item.ingredients) ? item.ingredients.map((ingredient) => text(ingredient, 60)).filter(Boolean).slice(0, 30) : [];
-  if (!SLUG_PATTERN.test(slug) || name.length < 2 || !shortName || !weight || !description || !image.startsWith("/") || !imageAlt || !usage || !storage || !Number.isInteger(price) || price < 1000 || ingredients.length === 0) return null;
-  return { slug, name, shortName, weight, price, description, image, imageAlt, ingredients, usage, storage };
+  if (!SLUG_PATTERN.test(slug) || name.length < 2 || !shortName || !isProductCategory(category) || !weight || !description || !isAllowedImageUrl(image) || !imageAlt || !usage || !storage || !Number.isInteger(price) || price < 1000 || ingredients.length === 0) return null;
+  return { slug, name, shortName, category, weight, price, description, image, imageAlt, ingredients, usage, storage };
 }
 
 function parseArticle(value: unknown): Article | null {
@@ -67,7 +71,7 @@ function parseArticle(value: unknown): Article | null {
   const image = text(item.image, 300);
   const imageAlt = text(item.imageAlt, 180);
   const content = text(item.content, 30_000);
-  if (!SLUG_PATTERN.test(slug) || title.length < 5 || excerpt.length < 10 || !category || !/^\d{4}-\d{2}-\d{2}$/.test(date) || !image.startsWith("/") || !imageAlt || content.length < 20) return null;
+  if (!SLUG_PATTERN.test(slug) || title.length < 5 || excerpt.length < 10 || !category || !/^\d{4}-\d{2}-\d{2}$/.test(date) || !isAllowedImageUrl(image) || !imageAlt || content.length < 20) return null;
   return { slug, title, excerpt, category, date, image, imageAlt, content };
 }
 
@@ -111,6 +115,8 @@ export async function POST(request: Request) {
     if (resource === "products") {
       const data = parseProduct(body.data);
       if (!data) throw new Error("Thông tin sản phẩm chưa hợp lệ.");
+      if (!await productCategoryExists(data.category)) throw new Error("Danh mục sản phẩm không tồn tại.");
+      if (!await productIngredientsExist(data.ingredients)) throw new Error("Có nguyên liệu chưa tồn tại trong danh sách quản lý.");
       if (await productSlugExists(data.slug)) throw new Error("Slug sản phẩm đã tồn tại.");
       const product = await createProduct(data);
       revalidatePublicContent(resource, product.slug);
@@ -143,6 +149,8 @@ export async function PATCH(request: Request) {
       const id = Number(body.id);
       const data = parseProduct(body.data);
       if (!data) throw new Error("Thông tin sản phẩm chưa hợp lệ.");
+      if (!await productCategoryExists(data.category)) throw new Error("Danh mục sản phẩm không tồn tại.");
+      if (!await productIngredientsExist(data.ingredients)) throw new Error("Có nguyên liệu chưa tồn tại trong danh sách quản lý.");
       if (await productSlugExists(data.slug, id)) throw new Error("Slug sản phẩm đã tồn tại.");
       const product = await updateProduct(id, data);
       revalidatePublicContent(resource, product.slug);

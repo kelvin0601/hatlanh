@@ -2,7 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import { Eye, EyeOff, Leaf, LoaderCircle, LockKeyhole, UserRound } from "lucide-react";
+import { Eye, EyeOff, LoaderCircle, LockKeyhole, UserRound } from "lucide-react";
+import { BrandLogo } from "@/components/ui/BrandLogo";
 
 export function AdminLoginForm() {
   const router = useRouter();
@@ -31,7 +32,7 @@ export function AdminLoginForm() {
     <div className="admin-root grid min-h-dvh place-items-center bg-cream px-4 py-8">
       <div className="w-full max-w-md rounded-2xl bg-paper p-6 shadow-[var(--shadow-soft)] sm:p-8">
         <div className="mb-7 text-center">
-          <span className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-forest text-white"><Leaf className="h-7 w-7" /></span>
+          <BrandLogo priority className="mx-auto mb-5 h-16 w-auto" />
           <h1 className="text-2xl font-semibold text-ink">Đăng nhập quản trị</h1>
           <p className="mt-2 text-[14px] text-muted">Quản lý sản phẩm, đơn hàng và nội dung An Vị.</p>
         </div>

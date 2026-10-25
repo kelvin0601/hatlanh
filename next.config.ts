@@ -1,6 +1,25 @@
 import type { NextConfig } from "next";
 
 const isDevelopment = process.env.NODE_ENV === "development";
+const r2PublicUrl = process.env.R2_PUBLIC_URL?.trim();
+const remotePatterns: NonNullable<NextConfig["images"]>["remotePatterns"] = [];
+
+if (r2PublicUrl) {
+  try {
+    const url = new URL(r2PublicUrl);
+    if (url.protocol === "https:") {
+      remotePatterns.push({
+        protocol: "https",
+        hostname: url.hostname,
+        port: url.port,
+        pathname: `${url.pathname.replace(/\/$/, "")}/**`,
+        search: "",
+      });
+    }
+  } catch {
+    // The upload API reports an actionable configuration error at runtime.
+  }
+}
 const contentSecurityPolicy = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDevelopment ? " 'unsafe-eval'" : ""}`,
@@ -20,6 +39,10 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   cacheComponents: true,
   partialPrefetching: true,
+  images: {
+    remotePatterns,
+    maximumRedirects: 0,
+  },
   turbopack: {
     rules: {
       "*.css": {

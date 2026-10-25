@@ -1,11 +1,13 @@
 import Link from "next/link";
-import Image from "next/image";
 import { getStoreArticles } from "@/lib/admin-store";
+import { ArticleCard } from "@/components/ui/ArticleCard";
+import { DotCarousel } from "@/components/ui/DotCarousel";
+import type { SiteContent } from "@/lib/site-content";
 
-export async function JournalSection() {
+export async function JournalSection({ content }: { content: SiteContent }) {
   const articles = await getStoreArticles();
   return (
-    <section className="bg-cream" style={{ paddingBlock: "var(--section-space)" }}>
+    <section className="overflow-hidden bg-cream" style={{ paddingBlock: "var(--section-space)" }}>
       <div
         className="mx-auto"
         style={{ width: "min(calc(100% - 2 * var(--page-gutter)), var(--container-max))" }}
@@ -13,16 +15,16 @@ export async function JournalSection() {
         <div className="flex items-end justify-between gap-4 mb-10 md:mb-12">
           <div>
             <p className="text-sage text-[13px] font-semibold uppercase tracking-[0.14em] mb-3">
-              Blog
+              {content.journalEyebrow}
             </p>
             <h2
               className="text-ink leading-[1.13] tracking-[-0.025em] font-medium"
               style={{
                 fontFamily: "var(--font-display)",
-                fontSize: "clamp(1.875rem, 4vw, 2.75rem)",
+                fontSize: "var(--text-section-title)",
               }}
             >
-              Chuyện an vị, chuyện sống lành
+              {content.journalTitle}
             </h2>
           </div>
           <Link
@@ -36,39 +38,24 @@ export async function JournalSection() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-          {articles.map((article) => (
-            <Link
-              key={article.slug}
-              href={`/goc-song-lanh/${article.slug}`}
-              className="group bg-paper rounded-[14px] overflow-hidden hover:shadow-[var(--shadow-soft)] transition-shadow"
-            >
-              <div className="aspect-[16/9] overflow-hidden relative">
-                <Image
-                  src={article.image}
-                  alt={article.imageAlt}
-                  fill
-                  sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
-                  className="object-cover transition-transform duration-[400ms] group-hover:scale-[1.04]"
-                />
+        <div className="md:hidden">
+          <DotCarousel label="Bài viết góc sống lành">
+            {articles.map((article, index) => (
+              <div
+                key={article.slug}
+                role="group"
+                aria-roledescription="slide"
+                aria-label={`${index + 1} / ${articles.length}`}
+                className="min-w-0 shrink-0 grow-0 basis-[88%] pl-5"
+              >
+                <ArticleCard article={article} />
               </div>
-              <div className="p-4 md:p-5 flex flex-col gap-2.5">
-                <div className="flex items-center gap-3 text-[13px]">
-                  <span className="text-sage font-semibold">{article.category}</span>
-                  <span className="text-border">·</span>
-                  <time className="text-muted" dateTime={article.date}>
-                    {new Date(article.date).toLocaleDateString("vi-VN")}
-                  </time>
-                </div>
-                <h3 className="text-ink font-semibold text-[16px] md:text-[17px] leading-[1.35] line-clamp-2 group-hover:text-forest transition-colors">
-                  {article.title}
-                </h3>
-                <p className="text-body text-[15px] leading-[1.6] line-clamp-2">
-                  {article.excerpt}
-                </p>
-              </div>
-            </Link>
-          ))}
+            ))}
+          </DotCarousel>
+        </div>
+
+        <div className="hidden gap-6 md:grid md:grid-cols-2 lg:grid-cols-3">
+          {articles.map((article) => <ArticleCard key={article.slug} article={article} />)}
         </div>
       </div>
     </section>

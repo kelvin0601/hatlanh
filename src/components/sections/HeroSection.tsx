@@ -2,6 +2,7 @@
 
 import { ChevronDown, Check } from "lucide-react";
 import { ButtonLink } from "@/components/ui/ButtonLink";
+import type { SiteContent } from "@/lib/site-content";
 
 const trustItems = [
   "100% tự nhiên",
@@ -9,7 +10,7 @@ const trustItems = [
   "Tốt cho sức khỏe",
 ];
 
-export function HeroSection() {
+export function HeroSection({ content }: { content: SiteContent }) {
   return (
     <section className="relative overflow-hidden bg-ink">
       {/* Video + poster background — full bleed */}
@@ -19,10 +20,10 @@ export function HeroSection() {
           muted
           loop
           playsInline
-          poster="/images/01_hero/hero-desktop-clean.png"
+          poster={content.heroImage}
           preload="auto"
-          className="w-full h-full object-cover"
-          aria-hidden="true"
+          className="h-full w-full object-cover"
+          aria-label={content.heroImageAlt}
         >
           <source src="/videos/hero.mp4" type="video/mp4" />
         </video>
@@ -46,31 +47,24 @@ export function HeroSection() {
         }}
       >
         {/* Text — left 40–45% */}
-        <div className="max-w-[520px] flex flex-col gap-6">
+        <div className="max-w-[660px] flex flex-col gap-6">
           <p className="text-white/75 font-semibold uppercase tracking-[0.14em] text-[12px] md:text-[13px]">
-            Nguyên lành hạt
+            {content.heroEyebrow}
           </p>
 
           <h1
             className="text-white leading-[1.08] tracking-[-0.035em] font-medium"
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: "clamp(2.375rem, 5.6vw, 5rem)",
+              fontSize: "clamp(2.25rem, 4.4vw, 3.75rem)",
               color: "white",
             }}
           >
-            Từ muôn hạt{" "}
-            <br className="hidden sm:block" />
-            thiên nhiên,
-            <br />
-            đến những{" "}
-            <br className="hidden sm:block" />
-            ngày an nhiên.
+            <span className="whitespace-pre-line">{content.heroTitle}</span>
           </h1>
 
           <p className="text-white/80 text-[16px] md:text-[18px] leading-[1.7] max-w-[440px]">
-            Những hạt ngũ cốc mộc mạc từ quê nhà, được chọn lựa bằng sự trân trọng,
-            mang đến những bữa ăn giản dị và đủ đầy.
+            {content.heroBody}
           </p>
 
           <div className="flex flex-wrap items-center gap-3 mt-1">

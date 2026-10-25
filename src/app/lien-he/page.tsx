@@ -1,175 +1,31 @@
-"use client";
+import { Mail, MapPin, Phone } from "lucide-react";
+import { ContactForm } from "@/components/ContactForm";
+import { getSitePageContent } from "@/lib/site-content-store";
 
-import { useState, type FormEvent } from "react";
-import { CheckCircle2, LoaderCircle, Send, Phone, Mail, MapPin } from "lucide-react";
-
-export default function ContactPage() {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
-  const [submitting, setSubmitting] = useState(false);
-  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setSubmitting(true);
-    setFeedback(null);
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      const result = (await response.json()) as { message?: string };
-      if (!response.ok) throw new Error(result.message ?? "Chưa thể gửi lời nhắn.");
-      setFeedback({ type: "success", message: result.message ?? "An Vị đã nhận lời nhắn của bạn." });
-      setForm({ name: "", email: "", phone: "", message: "" });
-    } catch (error) {
-      setFeedback({ type: "error", message: error instanceof Error ? error.message : "Đã có lỗi xảy ra." });
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
+export default async function ContactPage() {
+  const content = await getSitePageContent("contact");
   return (
-    <>
-      <section className="bg-cream" style={{ paddingBlock: "var(--section-space)" }}>
-        <div
-          className="mx-auto"
-          style={{ width: "min(calc(100% - 2 * var(--page-gutter)), var(--container-max))" }}
-        >
-          <div className="max-w-3xl mx-auto text-center mb-10 md:mb-14">
-            <h1
-              className="text-ink leading-[1.12] tracking-[-0.035em] font-medium mb-4"
-              style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.375rem, 11.3vw, 3rem)" }}
-            >
-              Liên hệ với An Vị
-            </h1>
-            <p className="text-body text-[17px] leading-[1.65]">
-              Bạn có câu hỏi, góp ý hoặc muốn hợp tác? Hãy gửi lời nhắn, chúng tôi sẽ phản hồi sớm nhất.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-            <div className="md:col-span-2">
-              <form
-                className="bg-paper rounded-2xl p-6 md:p-8 flex flex-col gap-5"
-                onSubmit={handleSubmit}
-              >
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div className="flex flex-col gap-2">
-                    <label htmlFor="name" className="text-ink font-medium text-[15px]">Họ và tên</label>
-                    <input
-                      id="name"
-                      type="text"
-                      required
-                      minLength={2}
-                      maxLength={80}
-                      value={form.name}
-                      onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      className="h-[52px] px-4 rounded-[12px] border border-border bg-cream text-body text-base focus:outline-none focus:border-forest focus:ring-2 focus:ring-forest/20"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <label htmlFor="email" className="text-ink font-medium text-[15px]">Email</label>
-                    <input
-                      id="email"
-                      type="email"
-                      required
-                      maxLength={120}
-                      value={form.email}
-                      onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      className="h-[52px] px-4 rounded-[12px] border border-border bg-cream text-body text-base focus:outline-none focus:border-forest focus:ring-2 focus:ring-forest/20"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <label htmlFor="phone" className="text-ink font-medium text-[15px]">Số điện thoại</label>
-                  <input
-                    id="phone"
-                    type="tel"
-                    value={form.phone}
-                    maxLength={20}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    className="h-[52px] px-4 rounded-[12px] border border-border bg-cream text-body text-base focus:outline-none focus:border-forest focus:ring-2 focus:ring-forest/20"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <label htmlFor="message" className="text-ink font-medium text-[15px]">Lời nhắn</label>
-                  <textarea
-                    id="message"
-                    required
-                    minLength={10}
-                    maxLength={2000}
-                    rows={5}
-                    value={form.message}
-                    onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    className="px-4 py-3 rounded-[12px] border border-border bg-cream text-body text-base leading-[1.65] resize-none focus:outline-none focus:border-forest focus:ring-2 focus:ring-forest/20"
-                  />
-                </div>
-
-                {feedback ? (
-                  <div
-                    role="status"
-                    className={`flex items-start gap-2 rounded-[12px] border px-4 py-3 text-[14px] ${feedback.type === "success" ? "border-forest/20 bg-forest/5 text-forest" : "border-error/20 bg-error/10 text-error"}`}
-                  >
-                    {feedback.type === "success" ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" /> : null}
-                    {feedback.message}
-                  </div>
-                ) : null}
-
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="inline-flex items-center justify-center gap-2 bg-forest hover:bg-forest-hover text-white font-semibold text-base h-[52px] px-7 rounded-full transition-colors w-full sm:w-fit disabled:cursor-wait disabled:opacity-70"
-                >
-                  {submitting ? <><LoaderCircle className="h-4 w-4 animate-spin" /> Đang gửi…</> : <>Gửi lời nhắn <Send className="w-4 h-4" /></>}
-                </button>
-              </form>
-            </div>
-
-            <div className="flex flex-col gap-6">
-              <div className="bg-paper rounded-2xl p-6">
-                <h2 className="text-ink font-semibold text-[17px] mb-5" style={{ fontFamily: "var(--font-display)" }}>
-                  Thông tin liên hệ
-                </h2>
-                <div className="flex flex-col gap-4">
-                  <div className="flex items-start gap-3">
-                    <Phone className="w-5 h-5 text-forest mt-0.5" />
-                    <div>
-                      <p className="text-ink font-medium text-[15px]">Hotline</p>
-                      <a href="tel:+842873000888" className="text-body text-[15px] hover:text-forest">028 7300 0888</a>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Mail className="w-5 h-5 text-forest mt-0.5" />
-                    <div>
-                      <p className="text-ink font-medium text-[15px]">Email</p>
-                      <a href="mailto:hello@anvi.vn" className="text-body text-[15px] hover:text-forest">hello@anvi.vn</a>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <MapPin className="w-5 h-5 text-forest mt-0.5" />
-                    <div>
-                      <p className="text-ink font-medium text-[15px]">Địa chỉ</p>
-                      <p className="text-body text-[15px]">TP. Hồ Chí Minh, Việt Nam</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-paper rounded-2xl p-6">
-                <h2 className="text-ink font-semibold text-[17px] mb-3" style={{ fontFamily: "var(--font-display)" }}>
-                  Hợp tác và phân phối
-                </h2>
-                <p className="text-body text-[15px] leading-[1.65]">
-                  Bạn muốn phân phối sản phẩm An Vị? Liên hệ qua email hoặc gửi lời nhắn, chúng tôi sẽ trao đổi chi tiết.
-                </p>
+    <section className="bg-cream" style={{ paddingBlock: "var(--hero-space)" }}>
+      <div className="mx-auto" style={{ width: "min(calc(100% - 2 * var(--page-gutter)), var(--container-max))" }}>
+        <div className="mx-auto mb-10 max-w-3xl text-center md:mb-14">
+          <h1 className="mb-4 font-medium leading-[1.12] tracking-[-0.035em] text-ink" style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.375rem, 11.3vw, 3rem)" }}>{content.heroTitle}</h1>
+          <p className="text-[17px] leading-[1.65] text-body">{content.heroBody}</p>
+        </div>
+        <div className="grid gap-8 md:grid-cols-3 md:gap-12">
+          <div className="md:col-span-2"><ContactForm /></div>
+          <div className="flex flex-col gap-6">
+            <div className="rounded-2xl bg-paper p-6">
+              <h2 className="mb-5 text-[17px] font-semibold text-ink" style={{ fontFamily: "var(--font-display)" }}>Thông tin liên hệ</h2>
+              <div className="flex flex-col gap-4">
+                <div className="flex items-start gap-3"><Phone className="mt-0.5 h-5 w-5 text-forest" /><div><p className="text-[15px] font-medium text-ink">Hotline</p><a href={`tel:${content.phone.replace(/\s/g, "")}`} className="text-[15px] text-body hover:text-forest">{content.phone}</a></div></div>
+                <div className="flex items-start gap-3"><Mail className="mt-0.5 h-5 w-5 text-forest" /><div><p className="text-[15px] font-medium text-ink">Email</p><a href={`mailto:${content.email}`} className="text-[15px] text-body hover:text-forest">{content.email}</a></div></div>
+                <div className="flex items-start gap-3"><MapPin className="mt-0.5 h-5 w-5 text-forest" /><div><p className="text-[15px] font-medium text-ink">Địa chỉ</p><p className="text-[15px] text-body">{content.address}</p></div></div>
               </div>
             </div>
+            <div className="rounded-2xl bg-paper p-6"><h2 className="mb-3 text-[17px] font-semibold text-ink" style={{ fontFamily: "var(--font-display)" }}>{content.cooperationTitle}</h2><p className="text-[15px] leading-[1.65] text-body">{content.cooperationBody}</p></div>
           </div>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

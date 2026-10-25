@@ -2,6 +2,7 @@ import "server-only";
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import type { AdminPermission } from "@/lib/admin-permissions";
 import { hasPermission } from "@/lib/admin-permissions";
 import { findAdminSession, isAdminAuthConfigured } from "@/lib/admin-auth-store";
@@ -17,6 +18,7 @@ export function getAdminCookieName() {
 export { isAdminAuthConfigured as isAdminConfigured };
 
 export async function getAdminSession() {
+  await connection();
   const rawToken = (await cookies()).get(getAdminCookieName())?.value ?? "";
   return findAdminSession(rawToken);
 }

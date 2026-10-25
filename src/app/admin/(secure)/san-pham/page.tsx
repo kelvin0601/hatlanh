@@ -1,6 +1,11 @@
 import { ProductManager } from "@/components/admin/ProductManager";
-import { readAdminStore } from "@/lib/admin-store";
+import { getProductCategories, getProductIngredients, readAdminStore } from "@/lib/admin-store";
 
 export default async function AdminProductsPage() {
-  return <ProductManager initialProducts={(await readAdminStore("catalog:write")).products} />;
+  const [store, categories, ingredients] = await Promise.all([
+    readAdminStore("catalog:write"),
+    getProductCategories(),
+    getProductIngredients(),
+  ]);
+  return <ProductManager initialProducts={store.products} initialCategories={categories} initialIngredients={ingredients} />;
 }

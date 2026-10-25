@@ -1,14 +1,16 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Heart, Star } from "lucide-react";
-import { formatPrice } from "@/lib/products";
+import { formatPrice, type Product } from "@/lib/products";
 import { AddToCartButton } from "@/components/commerce/AddToCartButton";
+import { DotCarousel } from "@/components/ui/DotCarousel";
 import { getStoreProducts } from "@/lib/admin-store";
+import type { SiteContent } from "@/lib/site-content";
 
-export async function ProductsSection() {
+export async function ProductsSection({ content }: { content: SiteContent }) {
   const products = await getStoreProducts();
   return (
-    <section className="bg-cream" style={{ paddingBlock: "var(--section-space)" }}>
+    <section className="overflow-hidden bg-cream" style={{ paddingBlock: "var(--section-space)" }}>
       <div
         className="mx-auto"
         style={{ width: "min(calc(100% - 2 * var(--page-gutter)), var(--container-max))" }}
@@ -17,16 +19,16 @@ export async function ProductsSection() {
         <div className="flex items-start sm:items-end justify-between gap-4 mb-10 md:mb-12">
           <div>
             <p className="text-sage text-[12px] font-semibold uppercase tracking-[0.14em] mb-3">
-              Sản phẩm nổi bật
+              {content.productsEyebrow}
             </p>
             <h2
               className="text-ink leading-[1.13] tracking-[-0.025em] font-medium"
               style={{
                 fontFamily: "var(--font-display)",
-                fontSize: "clamp(1.875rem, 4vw, 2.75rem)",
+                fontSize: "var(--text-section-title)",
               }}
             >
-              Ngũ cốc cho một cuộc sống lành mạnh
+              {content.productsTitle}
             </h2>
           </div>
           <div className="flex items-center gap-3">
@@ -42,67 +44,24 @@ export async function ProductsSection() {
           </div>
         </div>
 
-        {/* Product grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
-          {products.map((product) => (
-            <article
-              key={product.id}
-              className="bg-paper rounded-[14px] overflow-hidden hover:shadow-[var(--shadow-soft)] transition-shadow group"
-            >
-              <div className="relative">
-                <Link href={`/san-pham/${product.slug}`} className="block">
-                  <div className="relative aspect-[4/5] bg-sand overflow-hidden">
-                    <Image
-                      src={product.image}
-                      alt={product.imageAlt}
-                      fill
-                      sizes="(max-width: 1023px) 50vw, 25vw"
-                      className="object-cover transition-transform duration-[220ms] group-hover:scale-[1.025]"
-                    />
-                  </div>
-                </Link>
-                {/* Wishlist heart */}
-                  <span
-                    className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/85 text-muted backdrop-blur-sm flex items-center justify-center shadow-sm"
-                    aria-label="Sản phẩm được yêu thích"
-                  >
-                    <Heart className="w-4 h-4 transition-all duration-300 group-hover/heart:scale-110 group-hover/heart:fill-white" />
-                  </span>
+        <div className="md:hidden">
+          <DotCarousel label="Sản phẩm nổi bật">
+            {products.map((product, index) => (
+              <div
+                key={product.id}
+                role="group"
+                aria-roledescription="slide"
+                aria-label={`${index + 1} / ${products.length}`}
+                className="min-w-0 shrink-0 grow-0 basis-[84%] pl-5"
+              >
+                <ProductCard product={product} />
               </div>
+            ))}
+          </DotCarousel>
+        </div>
 
-              <div className="p-3 md:p-4 flex flex-col gap-1">
-                <Link href={`/san-pham/${product.slug}`}>
-                  <h3 className="text-ink font-semibold text-[15px] md:text-[16px] leading-[1.35] line-clamp-1 hover:text-forest transition-colors">
-                    {product.name.replace("Ngũ cốc An Vị ", "")}
-                  </h3>
-                </Link>
-                <p className="text-muted text-[13px] leading-[1.4] line-clamp-1">
-                  {product.description.split("—")[0].trim()}
-                </p>
-
-                {/* Rating */}
-                <div className="flex items-center gap-1.5 mt-1">
-                  <div className="flex items-center gap-0.5">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star
-                        key={star}
-                        className={`w-3 h-3 ${star <= 4 ? "text-wheat fill-wheat" : "text-wheat/40 fill-wheat/40"}`}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-muted text-[12px]">4.8</span>
-                </div>
-
-                {/* Price + cart */}
-                <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/40">
-                  <span className="text-ink text-[16px] md:text-[18px] font-bold leading-[1.3]">
-                    {formatPrice(product.price)}
-                  </span>
-                  <AddToCartButton product={product} compact />
-                </div>
-              </div>
-            </article>
-          ))}
+        <div className="hidden gap-4 md:grid md:grid-cols-2 md:gap-5 lg:grid-cols-4">
+          {products.map((product) => <ProductCard key={product.id} product={product} />)}
         </div>
 
         {/* Mobile: Xem tất cả */}
@@ -119,5 +78,51 @@ export async function ProductsSection() {
         </div>
       </div>
     </section>
+  );
+}
+
+function ProductCard({ product }: { product: Product }) {
+  return (
+    <article className="group h-full overflow-hidden rounded-[14px] bg-paper transition-shadow hover:shadow-[var(--shadow-soft)]">
+      <div className="relative">
+        <Link href={`/san-pham/${product.slug}`} className="block">
+          <div className="relative aspect-[4/5] overflow-hidden bg-sand">
+            <Image
+              src={product.image}
+              alt={product.imageAlt}
+              fill
+              sizes="(max-width: 767px) 84vw, (max-width: 1023px) 50vw, 25vw"
+              className="object-cover transition-transform duration-[220ms] group-hover:scale-[1.025]"
+            />
+          </div>
+        </Link>
+        <span className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/85 text-muted shadow-sm backdrop-blur-sm" aria-label="Sản phẩm được yêu thích">
+          <Heart className="h-4 w-4 transition-all duration-300 group-hover:scale-110" />
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-1 p-4">
+        <Link href={`/san-pham/${product.slug}`}>
+          <h3 className="line-clamp-1 text-[16px] font-semibold leading-[1.35] text-ink transition-colors hover:text-forest">
+            {product.name.replace("Ngũ cốc An Vị ", "")}
+          </h3>
+        </Link>
+        <p className="line-clamp-1 text-[13px] leading-[1.4] text-muted">
+          {product.description.split("—")[0].trim()}
+        </p>
+        <div className="mt-1 flex items-center gap-1.5">
+          <div className="flex items-center gap-0.5">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <Star key={star} className={`h-3 w-3 ${star <= 4 ? "fill-wheat text-wheat" : "fill-wheat/40 text-wheat/40"}`} />
+            ))}
+          </div>
+          <span className="text-[12px] text-muted">4.8</span>
+        </div>
+        <div className="mt-2 flex items-center justify-between border-t border-border/40 pt-2">
+          <span className="text-[16px] font-bold leading-[1.3] text-ink md:text-[18px]">{formatPrice(product.price)}</span>
+          <AddToCartButton product={product} compact />
+        </div>
+      </div>
+    </article>
   );
 }

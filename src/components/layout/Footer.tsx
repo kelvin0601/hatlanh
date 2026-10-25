@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ChevronDown, Phone, Mail, MapPin } from "lucide-react";
+import { BrandLogo } from "@/components/ui/BrandLogo";
 
 const footerGroups = [
   {
@@ -51,7 +52,7 @@ function FooterAccordion({ title, links }: { title: string; links: { label: stri
       <ul className={`flex flex-col gap-2.5 pb-4 md:pb-0 ${open ? "block" : "hidden md:flex"}`}>
         {links.map((link) => (
           <li key={link.label}>
-            <Link href={link.href} className="text-white/60 hover:text-white transition-colors text-[13px]">
+            <Link href={link.href} className="link-underline text-[13px] text-white/85 transition-colors hover:text-white">
               {link.label}
             </Link>
           </li>
@@ -63,7 +64,7 @@ function FooterAccordion({ title, links }: { title: string; links: { label: stri
 
 function SocialIcon({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <a href="#" aria-label={label} className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center text-white/60 hover:text-white hover:border-white/40 transition-colors">
+    <a href="#" aria-label={label} className="flex h-9 w-9 items-center justify-center rounded-full border border-white/35 text-white/85 transition-colors hover:border-white/70 hover:text-white">
       {children}
     </a>
   );
@@ -76,19 +77,13 @@ export function Footer() {
         className="mx-auto py-12 md:py-16"
         style={{ width: "min(calc(100% - 2 * var(--page-gutter)), var(--container-max))" }}
       >
-        <div className="grid grid-cols-1 md:grid-cols-[1.2fr_1fr_1fr_1fr] gap-8 md:gap-8">
+        <div className="grid grid-cols-1 gap-0 md:grid-cols-[1.2fr_1fr_1fr_1fr] md:gap-8">
           {/* Brand column */}
           <div className="mb-4 md:mb-0">
-            <Link href="/" className="flex items-center gap-2 mb-3">
-              <svg width="24" height="24" viewBox="0 0 28 28" fill="none" className="text-white">
-                <path d="M14 3C14 3 6 7 6 15c0 4.4 3.6 8 8 8s8-3.6 8-8c0-8-8-12-8-12z" stroke="currentColor" strokeWidth="1.5" fill="none" />
-                <path d="M14 23V11M14 11C12 13 10 14 8 14.5M14 11c2 2 4 3 6 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
-              <span className="text-white text-lg font-semibold tracking-tight uppercase" style={{ fontFamily: "var(--font-display)", letterSpacing: "0.05em" }}>
-                An Vị
-              </span>
+            <Link href="/" aria-label="An Vị - Trang chủ" className="mb-3 inline-flex">
+              <BrandLogo variant="footer" className="h-14 w-auto" />
             </Link>
-            <p className="text-white/50 text-[13px] leading-relaxed mb-5">
+            <p className="mb-5 text-[13px] leading-relaxed text-white/80">
               An vị mỗi ngày, dưỡng thân tâm.
             </p>
 
@@ -117,24 +112,24 @@ export function Footer() {
 
         {/* Contact info - inline with last column on desktop */}
         <div className="md:hidden mt-8 flex flex-col gap-3">
-          <div className="flex items-center gap-2.5 text-white/60 text-[13px]">
+          <div className="flex items-center gap-2.5 text-[13px] text-white/85">
             <Phone className="w-4 h-4" /> 028 7300 0888
           </div>
-          <div className="flex items-center gap-2.5 text-white/60 text-[13px]">
+          <div className="flex items-center gap-2.5 text-[13px] text-white/85">
             <Mail className="w-4 h-4" /> info@anvi.vn
           </div>
-          <div className="flex items-center gap-2.5 text-white/60 text-[13px]">
+          <div className="flex items-center gap-2.5 text-[13px] text-white/85">
             <MapPin className="w-4 h-4" /> Số 123, Xã..., Huyện..., Việt Nam
           </div>
         </div>
 
         {/* Bottom */}
-        <div className="border-t border-white/10 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-[13px] text-white/40">
-          <p>&copy; 2026 An Vị. All rights reserved.</p>
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-[13px] md:flex-row">
+          <p className="text-white/40">&copy; 2026 An Vị. All rights reserved.</p>
           <div className="flex items-center gap-5">
-            <Link href="/chinh-sach/dieu-khoan-su-dung" className="hover:text-white/70 transition-colors">Điều khoản sử dụng</Link>
-            <Link href="/chinh-sach/bao-mat" className="hover:text-white/70 transition-colors">Chính sách bảo mật</Link>
-            <Link href="/sitemap.xml" className="hover:text-white/70 transition-colors">Sitemap</Link>
+            <Link href="/chinh-sach/dieu-khoan-su-dung" className="link-underline text-white/80 transition-colors hover:text-white">Điều khoản sử dụng</Link>
+            <Link href="/chinh-sach/bao-mat" className="link-underline text-white/80 transition-colors hover:text-white">Chính sách bảo mật</Link>
+            <Link href="/sitemap.xml" className="link-underline text-white/80 transition-colors hover:text-white">Sitemap</Link>
           </div>
         </div>
       </div>

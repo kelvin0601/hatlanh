@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import type { SiteContent } from "@/lib/site-content";
 
-export function NewsletterSection() {
+export function NewsletterSection({ content }: { content: SiteContent }) {
   const [email, setEmail] = useState("");
 
   return (
@@ -15,7 +16,7 @@ export function NewsletterSection() {
           {/* Left: text */}
           <div className="flex-1 max-w-lg">
             <p className="text-sage text-[12px] font-semibold uppercase tracking-[0.14em] mb-2">
-              Đăng ký nhận tin
+              {content.newsletterEyebrow}
             </p>
             <h2
               className="text-ink leading-[1.13] tracking-[-0.025em] font-medium mb-2"
@@ -24,10 +25,10 @@ export function NewsletterSection() {
                 fontSize: "clamp(1.5rem, 3vw, 2rem)",
               }}
             >
-              Cùng An Vị sống lành mỗi ngày
+              {content.newsletterTitle}
             </h2>
             <p className="text-body text-[15px] leading-[1.6]">
-              Nhận thông tin về sản phẩm mới, công thức hay và những câu chuyện từ tế.
+              {content.newsletterBody}
             </p>
           </div>
 
@@ -42,7 +43,7 @@ export function NewsletterSection() {
               placeholder="Nhập email của bạn"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="flex-1 h-[52px] px-5 rounded-full bg-paper border border-border text-body text-base focus:outline-none focus:border-forest focus:ring-2 focus:ring-forest/20"
+              className="min-w-0 flex-1 h-[52px] px-5 rounded-full bg-paper border border-border text-body text-base focus:outline-none focus:border-forest focus:ring-2 focus:ring-forest/20"
             />
             <button
               type="submit"

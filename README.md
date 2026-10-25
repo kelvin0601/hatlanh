@@ -50,3 +50,7 @@ npm run build
 - Các role hiện có: `owner`, `admin`, `editor`, `fulfillment`. Quyền luôn được kiểm tra ở API/DAL, không chỉ ẩn ở giao diện.
 - API đặt hàng đối chiếu giá ở server, rate limit theo IP/thông tin khách và dùng idempotency key để tránh tạo trùng đơn.
 - Dữ liệu và session hiện lưu tại `data/*.json`, phù hợp khi chạy local hoặc server có ổ đĩa ghi bền. Khi deploy serverless cần thay lớp lưu trữ bằng PostgreSQL/Supabase và rate limit bằng Redis/KV dùng chung.
+
+## Ảnh trên Cloudflare R2
+
+Admin có thể tải và thay ảnh trực tiếp trong form sản phẩm/bài viết. Xem danh sách biến môi trường, quyền token và cách bật public URL tại [docs/cloudflare-r2.md](docs/cloudflare-r2.md).

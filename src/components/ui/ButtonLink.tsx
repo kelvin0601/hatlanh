@@ -8,13 +8,13 @@ type ButtonSize = "sm" | "md" | "lg";
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-forest text-white ring-1 ring-forest/10 shadow-[0_8px_24px_rgba(24,53,34,0.24)] hover:bg-forest-hover hover:-translate-y-1 hover:shadow-[0_14px_32px_rgba(24,53,34,0.32)]",
+    "bg-forest text-white ring-1 ring-forest/10 shadow-[0_8px_24px_rgba(24,53,34,0.24)] hover:bg-forest-hover hover:shadow-[0_14px_32px_rgba(24,53,34,0.32)]",
   light:
-    "bg-white text-forest ring-1 ring-white/90 shadow-[0_10px_30px_rgba(0,0,0,0.24)] hover:bg-cream hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.3)]",
+    "bg-white text-forest ring-1 ring-white/90 shadow-[0_10px_30px_rgba(0,0,0,0.24)] hover:bg-cream hover:shadow-[0_16px_36px_rgba(0,0,0,0.3)]",
   "outline-light":
-    "border border-white/65 bg-ink/35 text-white shadow-[0_8px_24px_rgba(0,0,0,0.18)] backdrop-blur-md hover:border-white hover:bg-white hover:text-forest hover:-translate-y-1 hover:shadow-[0_14px_32px_rgba(0,0,0,0.28)]",
+    "border border-white/65 bg-ink/35 text-white shadow-[0_8px_24px_rgba(0,0,0,0.18)] backdrop-blur-md hover:border-white hover:bg-white hover:text-forest hover:shadow-[0_14px_32px_rgba(0,0,0,0.28)]",
   "outline-dark":
-    "border border-forest/35 bg-white/55 text-forest shadow-[0_6px_18px_rgba(33,55,40,0.08)] backdrop-blur-sm hover:border-forest hover:bg-forest hover:text-white hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(33,55,40,0.2)]",
+    "border border-forest/35 bg-white/55 text-forest shadow-[0_6px_18px_rgba(33,55,40,0.08)] backdrop-blur-sm hover:border-forest hover:bg-forest hover:text-white hover:shadow-[0_14px_30px_rgba(33,55,40,0.2)]",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -47,7 +47,7 @@ export function ButtonLink({
   return (
     <Link
       className={clsx(
-        "group relative isolate inline-flex items-center justify-center gap-2 overflow-hidden rounded-full font-semibold transition-all duration-300 ease-[var(--ease-organic)] active:translate-y-0 active:scale-[0.97] motion-reduce:transform-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wheat focus-visible:ring-offset-2",
+        "group relative isolate inline-flex items-center justify-center gap-2 overflow-hidden rounded-full font-semibold transition-all duration-300 ease-[var(--ease-organic)] active:scale-[0.97] motion-reduce:transform-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wheat focus-visible:ring-offset-2",
         variantClasses[variant],
         sizeClasses[size],
         className,
