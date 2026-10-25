@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState, type FormEvent } from "react";
-import { FolderPlus, LoaderCircle, Pencil, Plus, Save, Trash2, Wheat, X } from "lucide-react";
+import { FolderPlus, LoaderCircle, Minus, PackageCheck, Pencil, Plus, Save, Trash2, Wheat, X } from "lucide-react";
 import type { Product } from "@/lib/products";
 import { formatPrice } from "@/lib/products";
 import { DEFAULT_PRODUCT_CATEGORY, getCategoryLabel, type ProductCategory, type ProductCategoryDefinition } from "@/lib/product-categories";
@@ -10,7 +10,7 @@ import { useAdminSession } from "@/components/admin/AdminShell";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import type { ProductIngredientDefinition } from "@/lib/product-ingredients";
 
-const emptyProduct: Product = { id: 0, slug: "", name: "", shortName: "", category: DEFAULT_PRODUCT_CATEGORY, weight: "", price: 0, description: "", image: "", imageAlt: "", ingredients: [], usage: "", storage: "Bảo quản nơi khô ráo, thoáng mát. Đậy kín sau khi mở." };
+const emptyProduct: Product = { id: 0, type: "single", comboItems: [], slug: "", name: "", shortName: "", category: DEFAULT_PRODUCT_CATEGORY, weight: "", price: 0, description: "", image: "", imageAlt: "", ingredients: [], usage: "", storage: "Bảo quản nơi khô ráo, thoáng mát. Đậy kín sau khi mở." };
 const inputClass = "h-11 w-full rounded-[10px] border border-border bg-cream px-3 text-[14px] text-ink outline-none focus:border-forest focus:ring-2 focus:ring-forest/15";
 
 export function ProductManager({ initialProducts, initialCategories, initialIngredients }: { initialProducts: Product[]; initialCategories: ProductCategoryDefinition[]; initialIngredients: ProductIngredientDefinition[] }) {
@@ -83,6 +83,30 @@ export function ProductManager({ initialProducts, initialCategories, initialIngr
     });
   }
 
+  function changeProductType(type: Product["type"]) {
+    setEditing((current) => current ? { ...current, type, comboItems: type === "single" ? [] : current.comboItems } : current);
+  }
+
+  function toggleComboProduct(product: Product) {
+    setEditing((current) => {
+      if (!current) return current;
+      const selected = current.comboItems.some((item) => item.productId === product.id);
+      const comboItems = selected
+        ? current.comboItems.filter((item) => item.productId !== product.id)
+        : [...current.comboItems, { productId: product.id, quantity: 1 }];
+      const selectedIds = new Set(comboItems.map((item) => item.productId));
+      const ingredients = Array.from(new Set(products.filter((item) => selectedIds.has(item.id)).flatMap((item) => item.ingredients)));
+      return { ...current, comboItems, ingredients };
+    });
+  }
+
+  function updateComboQuantity(productId: number, quantity: number) {
+    setEditing((current) => current ? {
+      ...current,
+      comboItems: current.comboItems.map((item) => item.productId === productId ? { ...item, quantity: Math.min(20, Math.max(1, quantity)) } : item),
+    } : current);
+  }
+
   function openCategoryForm(selectAfterCreate = false) {
     setCategoryLabel("");
     setCategoryDescription("");
@@ -142,6 +166,10 @@ export function ProductManager({ initialProducts, initialCategories, initialIngr
       setMessage("Hãy chọn ít nhất một nguyên liệu.");
       return;
     }
+    if (editing.type === "combo" && editing.comboItems.length < 2) {
+      setMessage("Hãy chọn ít nhất 2 sản phẩm cho combo.");
+      return;
+    }
     setPending(true);
     setMessage("");
     const isNew = editing.id === 0;
@@ -172,9 +200,10 @@ export function ProductManager({ initialProducts, initialCategories, initialIngr
   return (
     <div className="mx-auto max-w-7xl">
       <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div><p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-sage">Danh mục</p><h1 className="mt-1 text-2xl font-semibold text-ink sm:text-3xl">Sản phẩm</h1><p className="mt-2 text-[14px] text-muted">{products.length} sản phẩm đang hiển thị trên website.</p></div><div className="flex flex-wrap gap-2"><button type="button" onClick={() => openIngredientForm()} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-forest px-4 text-[14px] font-semibold text-forest hover:bg-forest/10"><Wheat className="h-4 w-4" /> Thêm nguyên liệu</button><button type="button" onClick={() => openCategoryForm()} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-forest px-4 text-[14px] font-semibold text-forest hover:bg-forest/10"><FolderPlus className="h-4 w-4" /> Thêm danh mục</button><button type="button" onClick={() => openForm()} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-forest px-4 text-[14px] font-semibold text-white hover:bg-forest-hover"><Plus className="h-4 w-4" /> Thêm sản phẩm</button></div></header>
-      {products.length === 0 ? <div className="rounded-[14px] bg-paper px-5 py-16 text-center text-muted">Chưa có sản phẩm.</div> : <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{products.map((product) => <article key={product.id} className="flex gap-3 rounded-[14px] bg-paper p-3 sm:p-4"><div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-[10px] bg-sand"><Image src={product.image} alt="" fill sizes="80px" className="object-cover" /></div><div className="min-w-0 flex-1"><h2 className="line-clamp-2 text-[14px] font-semibold leading-5 text-ink">{product.name}</h2><p className="mt-1 text-[12px] text-muted">{getCategoryLabel(product.category, categories)} · {product.weight} · {formatPrice(product.price)}</p><div className="mt-2 flex gap-1"><button type="button" onClick={() => openForm(product)} className="inline-flex min-h-9 items-center gap-1 rounded-full px-3 text-[12px] font-semibold text-forest hover:bg-forest/10"><Pencil className="h-3.5 w-3.5" /> Sửa</button><button type="button" onClick={() => remove(product)} className="grid h-9 w-9 place-items-center rounded-full text-muted hover:bg-error/10 hover:text-error" aria-label={`Xóa ${product.name}`}><Trash2 className="h-3.5 w-3.5" /></button></div></div></article>)}</div>}
+      {products.length === 0 ? <div className="rounded-[14px] bg-paper px-5 py-16 text-center text-muted">Chưa có sản phẩm.</div> : <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{products.map((product) => <article key={product.id} className="flex gap-3 rounded-[14px] bg-paper p-3 sm:p-4"><div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-[10px] bg-sand"><Image src={product.image} alt="" fill sizes="80px" className="object-cover" /></div><div className="min-w-0 flex-1"><div className="flex items-start gap-2"><h2 className="line-clamp-2 flex-1 text-[14px] font-semibold leading-5 text-ink">{product.name}</h2>{product.type === "combo" ? <span className="rounded-full bg-gold/15 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-forest">Combo</span> : null}</div><p className="mt-1 text-[12px] text-muted">{getCategoryLabel(product.category, categories)} · {product.weight} · {formatPrice(product.price)}</p>{product.type === "combo" ? <p className="mt-1 text-[11px] font-medium text-sage">{product.comboItems.length} sản phẩm thành phần</p> : null}<div className="mt-2 flex gap-1"><button type="button" onClick={() => openForm(product)} className="inline-flex min-h-9 items-center gap-1 rounded-full px-3 text-[12px] font-semibold text-forest hover:bg-forest/10"><Pencil className="h-3.5 w-3.5" /> Sửa</button><button type="button" onClick={() => remove(product)} className="grid h-9 w-9 place-items-center rounded-full text-muted hover:bg-error/10 hover:text-error" aria-label={`Xóa ${product.name}`}><Trash2 className="h-3.5 w-3.5" /></button></div></div></article>)}</div>}
 
       {editing ? <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/40 p-0 sm:items-center sm:p-6" role="dialog" aria-modal="true" aria-labelledby="product-form-title"><button type="button" onClick={closeForm} className="absolute inset-0" aria-label="Đóng biểu mẫu" /><form onSubmit={save} className="relative max-h-[92dvh] w-full max-w-3xl overflow-y-auto overscroll-contain rounded-t-2xl bg-paper p-5 shadow-2xl sm:rounded-2xl sm:p-7"><div className="mb-5 flex items-center justify-between"><h2 id="product-form-title" className="text-xl font-semibold text-ink">{editing.id ? "Sửa sản phẩm" : "Thêm sản phẩm"}</h2><button type="button" onClick={closeForm} className="grid h-11 w-11 place-items-center rounded-full hover:bg-sand" aria-label="Đóng"><X className="h-5 w-5" /></button></div><div className="grid gap-4 sm:grid-cols-2">
+        <div className="sm:col-span-2"><p className="text-[13px] font-semibold text-ink">Loại sản phẩm *</p><div className="mt-1.5 grid grid-cols-2 gap-2 rounded-[12px] bg-cream p-1.5"><button type="button" onClick={() => changeProductType("single")} className={`min-h-10 rounded-[9px] text-[13px] font-semibold transition-colors ${editing.type === "single" ? "bg-paper text-forest shadow-sm" : "text-muted hover:text-ink"}`}>Sản phẩm thường</button><button type="button" onClick={() => changeProductType("combo")} className={`inline-flex min-h-10 items-center justify-center gap-2 rounded-[9px] text-[13px] font-semibold transition-colors ${editing.type === "combo" ? "bg-paper text-forest shadow-sm" : "text-muted hover:text-ink"}`}><PackageCheck className="h-4 w-4" /> Combo tiết kiệm</button></div></div>
         <label className="text-[13px] font-semibold text-ink">Tên sản phẩm *<input required value={editing.name} onChange={(event) => update("name", event.target.value)} className={`${inputClass} mt-1.5`} /></label>
         <label className="text-[13px] font-semibold text-ink">Tên ngắn *<input required value={editing.shortName} onChange={(event) => update("shortName", event.target.value)} className={`${inputClass} mt-1.5`} /></label>
         <div><div className="flex items-center justify-between gap-2"><label htmlFor="product-category" className="text-[13px] font-semibold text-ink">Danh mục *</label><button type="button" onClick={() => openCategoryForm(true)} className="inline-flex items-center gap-1 text-[12px] font-semibold text-forest hover:underline"><Plus className="h-3.5 w-3.5" /> Thêm danh mục</button></div><select id="product-category" required value={editing.category} onChange={(event) => update("category", event.target.value as ProductCategory)} className={`${inputClass} mt-1.5`}>{categories.map((category) => <option key={category.value} value={category.value}>{category.label}</option>)}</select></div>
@@ -184,6 +213,7 @@ export function ProductManager({ initialProducts, initialCategories, initialIngr
         <ImageUploadField value={editing.image} folder="products" disabled={pending} onUploaded={imageUploaded} onBusyChange={setImageUploading} />
         <label className="text-[13px] font-semibold text-ink sm:col-span-2">Alt ảnh *<input required value={editing.imageAlt} onChange={(event) => update("imageAlt", event.target.value)} className={`${inputClass} mt-1.5`} /></label>
         <label className="text-[13px] font-semibold text-ink sm:col-span-2">Mô tả *<textarea required rows={3} value={editing.description} onChange={(event) => update("description", event.target.value)} className={`${inputClass} mt-1.5 h-auto py-3`} /></label>
+        {editing.type === "combo" ? <div className="sm:col-span-2"><div className="flex items-end justify-between gap-3"><div><p className="text-[13px] font-semibold text-ink">Sản phẩm trong combo *</p><p className="mt-1 text-[11px] text-muted">Chọn ít nhất 2 sản phẩm. Nguyên liệu sẽ được tổng hợp tự động.</p></div><span className="text-[12px] font-semibold text-forest">{editing.comboItems.length} đã chọn</span></div><div className="mt-2 space-y-2 rounded-[12px] border border-border bg-cream p-2.5">{products.filter((product) => product.type === "single" && product.id !== editing.id).length === 0 ? <p className="px-2 py-4 text-center text-[13px] text-muted">Cần có ít nhất 2 sản phẩm thường trước khi tạo combo.</p> : products.filter((product) => product.type === "single" && product.id !== editing.id).map((product) => { const comboItem = editing.comboItems.find((item) => item.productId === product.id); return <div key={product.id} className={`flex items-center gap-3 rounded-[10px] border p-2 transition-colors ${comboItem ? "border-forest/40 bg-paper" : "border-transparent bg-paper/60"}`}><button type="button" onClick={() => toggleComboProduct(product)} className="flex min-w-0 flex-1 items-center gap-3 text-left"><span className={`grid h-6 w-6 shrink-0 place-items-center rounded-full border ${comboItem ? "border-forest bg-forest text-white" : "border-border text-transparent"}`}><Plus className="h-3.5 w-3.5" /></span><span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-[8px] bg-sand"><Image src={product.image} alt="" fill sizes="44px" className="object-cover" /></span><span className="min-w-0"><span className="block truncate text-[13px] font-semibold text-ink">{product.name}</span><span className="text-[11px] text-muted">{product.weight} · {formatPrice(product.price)}</span></span></button>{comboItem ? <div className="flex shrink-0 items-center rounded-full border border-border bg-cream"><button type="button" onClick={() => updateComboQuantity(product.id, comboItem.quantity - 1)} className="grid h-8 w-8 place-items-center text-forest" aria-label={`Giảm số lượng ${product.name}`}><Minus className="h-3.5 w-3.5" /></button><span className="w-6 text-center text-[12px] font-semibold text-ink">{comboItem.quantity}</span><button type="button" onClick={() => updateComboQuantity(product.id, comboItem.quantity + 1)} className="grid h-8 w-8 place-items-center text-forest" aria-label={`Tăng số lượng ${product.name}`}><Plus className="h-3.5 w-3.5" /></button></div> : null}</div>; })}</div></div> : null}
         <div className="sm:col-span-2"><div className="flex items-center justify-between gap-2"><p className="text-[13px] font-semibold text-ink">Nguyên liệu *</p><button type="button" onClick={() => openIngredientForm(true)} className="inline-flex items-center gap-1 text-[12px] font-semibold text-forest hover:underline"><Plus className="h-3.5 w-3.5" /> Thêm nguyên liệu</button></div><div className="mt-1.5 flex min-h-14 flex-wrap gap-2 rounded-[10px] border border-border bg-cream p-2.5">{managedIngredients.length === 0 ? <p className="self-center px-1 text-[13px] text-muted">Chưa có nguyên liệu. Hãy tạo nguyên liệu mới.</p> : managedIngredients.map((ingredient) => { const selected = editing.ingredients.includes(ingredient.name); return <button key={ingredient.name} type="button" aria-pressed={selected} onClick={() => toggleIngredient(ingredient.name)} className={`rounded-full border px-3 py-2 text-[13px] font-medium transition-colors ${selected ? "border-forest bg-forest text-white" : "border-border bg-paper text-body hover:border-sage"}`}>{ingredient.name}</button>; })}</div><p className="mt-1.5 text-[11px] text-muted">Có thể chọn nhiều nguyên liệu cho một sản phẩm.</p></div>
         <label className="text-[13px] font-semibold text-ink sm:col-span-2">Cách dùng *<textarea required rows={3} value={editing.usage} onChange={(event) => update("usage", event.target.value)} className={`${inputClass} mt-1.5 h-auto py-3`} /></label>
         <label className="text-[13px] font-semibold text-ink sm:col-span-2">Bảo quản *<textarea required rows={2} value={editing.storage} onChange={(event) => update("storage", event.target.value)} className={`${inputClass} mt-1.5 h-auto py-3`} /></label>

@@ -3,7 +3,7 @@ import "server-only";
 import { db } from "@/lib/db";
 import * as schema from "@/lib/schema";
 import { eq, and, desc, inArray, sql } from "drizzle-orm";
-import { DEFAULT_PRODUCT_CATEGORY, isProductCategory, type Product, type ProductCategoryDefinition } from "@/lib/products";
+import { DEFAULT_PRODUCT_CATEGORY, isProductCategory, type Product, type ProductCategoryDefinition, type ProductComboItem } from "@/lib/products";
 import type { Article } from "@/lib/articles";
 import type { Order } from "@/lib/commerce";
 import { cacheLife, cacheTag, revalidateTag } from "next/cache";
@@ -18,9 +18,11 @@ export interface StoreData {
   updatedAt: string;
 }
 
-function toProduct(row: typeof schema.products.$inferSelect): Product {
+function toProduct(row: typeof schema.products.$inferSelect, comboItems: ProductComboItem[] = []): Product {
   return {
     id: row.id,
+    type: row.productType,
+    comboItems,
     slug: row.slug,
     name: row.name,
     shortName: row.shortName,
@@ -34,6 +36,20 @@ function toProduct(row: typeof schema.products.$inferSelect): Product {
     usage: row.usage,
     storage: row.storage,
   };
+}
+
+async function queryProducts(): Promise<Product[]> {
+  const [productRows, comboRows] = await Promise.all([
+    db.select().from(schema.products).orderBy(schema.products.id),
+    db.select().from(schema.productComboItems).orderBy(schema.productComboItems.id),
+  ]);
+  const comboItemsByProduct = new Map<number, ProductComboItem[]>();
+  for (const row of comboRows) {
+    const items = comboItemsByProduct.get(row.comboProductId) ?? [];
+    items.push({ productId: row.productId, quantity: row.quantity });
+    comboItemsByProduct.set(row.comboProductId, items);
+  }
+  return productRows.map((row) => toProduct(row, comboItemsByProduct.get(row.id) ?? []));
 }
 
 function toArticle(row: typeof schema.articles.$inferSelect): Article {
@@ -102,14 +118,14 @@ export async function readStore(): Promise<StoreData> {
   cacheLife("max");
   cacheTag("an-vi-store");
 
-  const [productRows, articleRows, orders] = await Promise.all([
-    db.select().from(schema.products).orderBy(schema.products.id),
+  const [products, articleRows, orders] = await Promise.all([
+    queryProducts(),
     db.select().from(schema.articles).orderBy(desc(schema.articles.date)),
     queryAllOrders(),
   ]);
 
   return {
-    products: productRows.map(toProduct),
+    products,
     articles: articleRows.map(toArticle),
     orders,
     updatedAt: new Date().toISOString(),
@@ -136,8 +152,7 @@ export async function getStoreProducts(): Promise<Product[]> {
   "use cache";
   cacheLife("max");
   cacheTag("an-vi-store");
-  const rows = await db.select().from(schema.products).orderBy(schema.products.id);
-  return rows.map(toProduct);
+  return queryProducts();
 }
 
 export async function getProductCategories(): Promise<ProductCategoryDefinition[]> {
@@ -173,8 +188,8 @@ export async function getStoreProductBySlug(slug: string): Promise<Product | und
   "use cache";
   cacheLife("max");
   cacheTag("an-vi-store");
-  const rows = await db.select().from(schema.products).where(eq(schema.products.slug, slug)).limit(1);
-  return rows[0] ? toProduct(rows[0]) : undefined;
+  const products = await getStoreProducts();
+  return products.find((product) => product.slug === slug);
 }
 
 export async function getStoreArticleBySlug(slug: string): Promise<Article | undefined> {
@@ -355,6 +370,7 @@ export async function deleteProductIngredient(name: string): Promise<ProductIngr
 
 export async function createProduct(data: Omit<Product, "id">): Promise<Product> {
   const rows = await db.insert(schema.products).values({
+    productType: data.type,
     slug: data.slug,
     name: data.name,
     shortName: data.shortName,
@@ -368,12 +384,20 @@ export async function createProduct(data: Omit<Product, "id">): Promise<Product>
     usage: data.usage,
     storage: data.storage,
   }).returning();
+  if (data.type === "combo") {
+    await db.insert(schema.productComboItems).values(data.comboItems.map((item) => ({
+      comboProductId: rows[0].id,
+      productId: item.productId,
+      quantity: item.quantity,
+    })));
+  }
   invalidateStore();
-  return toProduct(rows[0]);
+  return toProduct(rows[0], data.type === "combo" ? data.comboItems : []);
 }
 
 export async function updateProduct(id: number, data: Omit<Product, "id">): Promise<Product> {
   const rows = await db.update(schema.products).set({
+    productType: data.type,
     slug: data.slug,
     name: data.name,
     shortName: data.shortName,
@@ -389,11 +413,21 @@ export async function updateProduct(id: number, data: Omit<Product, "id">): Prom
     updatedAt: new Date(),
   }).where(eq(schema.products.id, id)).returning();
   if (rows.length === 0) throw new Error("Không tìm thấy sản phẩm.");
+  await db.delete(schema.productComboItems).where(eq(schema.productComboItems.comboProductId, id));
+  if (data.type === "combo") {
+    await db.insert(schema.productComboItems).values(data.comboItems.map((item) => ({
+      comboProductId: id,
+      productId: item.productId,
+      quantity: item.quantity,
+    })));
+  }
   invalidateStore();
-  return toProduct(rows[0]);
+  return toProduct(rows[0], data.type === "combo" ? data.comboItems : []);
 }
 
 export async function deleteProduct(id: number): Promise<string> {
+  const referenced = await db.select({ id: schema.productComboItems.id }).from(schema.productComboItems).where(eq(schema.productComboItems.productId, id)).limit(1);
+  if (referenced.length > 0) throw new Error("Sản phẩm đang nằm trong một combo nên chưa thể xóa.");
   const rows = await db.delete(schema.products).where(eq(schema.products.id, id)).returning({ slug: schema.products.slug });
   if (rows.length === 0) throw new Error("Không tìm thấy sản phẩm.");
   invalidateStore();
@@ -473,6 +507,26 @@ export async function articleSlugExists(slug: string, excludeSlug?: string): Pro
     : eq(schema.articles.slug, slug);
   const rows = await db.select({ id: schema.articles.id }).from(schema.articles).where(condition).limit(1);
   return rows.length > 0;
+}
+
+export async function validateProductCombo(data: Pick<Product, "type" | "comboItems">, currentId?: number): Promise<void> {
+  if (data.type === "single") {
+    if (data.comboItems.length > 0) throw new Error("Sản phẩm thường không được chứa sản phẩm con.");
+    return;
+  }
+  if (data.comboItems.length < 2) throw new Error("Combo cần có ít nhất 2 sản phẩm.");
+  const componentIds = data.comboItems.map((item) => item.productId);
+  if (new Set(componentIds).size !== componentIds.length) throw new Error("Mỗi sản phẩm chỉ được xuất hiện một lần trong combo.");
+  if (currentId !== undefined && componentIds.includes(currentId)) throw new Error("Combo không thể chứa chính nó.");
+
+  const components = await db.select({ id: schema.products.id, type: schema.products.productType }).from(schema.products).where(inArray(schema.products.id, componentIds));
+  if (components.length !== componentIds.length) throw new Error("Có sản phẩm trong combo không còn tồn tại.");
+  if (components.some((component) => component.type !== "single")) throw new Error("Combo không thể chứa một combo khác.");
+
+  if (currentId !== undefined) {
+    const referenced = await db.select({ id: schema.productComboItems.id }).from(schema.productComboItems).where(eq(schema.productComboItems.productId, currentId)).limit(1);
+    if (referenced.length > 0) throw new Error("Sản phẩm đang thuộc một combo khác nên không thể đổi thành combo.");
+  }
 }
 
 function toProductCategory(row: typeof schema.productCategories.$inferSelect): ProductCategoryDefinition {

@@ -29,11 +29,13 @@ interface ToastMessage {
 
 interface ShopContextValue {
   cart: CartLine[];
+  catalog: Product[];
   cartCount: number;
   hydrated: boolean;
   addToCart: (product: Product, quantity?: number) => void;
   updateQuantity: (productId: number, quantity: number) => void;
   removeFromCart: (productId: number) => void;
+  upgradeToCombo: (combo: Product) => void;
   clearCart: () => void;
   saveOrder: (order: Order) => void;
   notify: (message: string) => void;
@@ -82,7 +84,7 @@ function subscribeToBrowserReady() {
   return () => undefined;
 }
 
-export function ShopProvider({ children }: { children: ReactNode }) {
+export function ShopProvider({ children, catalog }: { children: ReactNode; catalog: Product[] }) {
   const cart = useSyncExternalStore(subscribeToCart, getCartSnapshot, () => EMPTY_CART);
   const hydrated = useSyncExternalStore(subscribeToBrowserReady, () => true, () => false);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
@@ -131,6 +133,25 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     updateCart((current) => current.filter((line) => line.productId !== productId));
   }, []);
 
+  const upgradeToCombo = useCallback((combo: Product) => {
+    if (combo.type !== "combo" || combo.comboItems.length === 0) return;
+    updateCart((current) => {
+      const requiredByProduct = new Map(combo.comboItems.map((item) => [item.productId, item.quantity]));
+      const next = current.flatMap((line) => {
+        const requiredQuantity = requiredByProduct.get(line.productId) ?? 0;
+        if (requiredQuantity === 0) return [line];
+        const remainingQuantity = line.quantity - Math.min(line.quantity, requiredQuantity);
+        return remainingQuantity > 0 ? [{ ...line, quantity: remainingQuantity }] : [];
+      });
+      const existingCombo = next.find((line) => line.productId === combo.id);
+      if (existingCombo) {
+        return next.map((line) => line.productId === combo.id ? { ...line, product: combo, quantity: Math.min(20, line.quantity + 1) } : line);
+      }
+      return [...next, { productId: combo.id, quantity: 1, product: combo }];
+    });
+    notify(`Đã đổi sang ${combo.shortName} để tiết kiệm hơn.`);
+  }, [notify]);
+
   const clearCart = useCallback(() => updateCart(() => []), []);
 
   const saveOrder = useCallback((order: Order) => {
@@ -147,11 +168,13 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const value = useMemo<ShopContextValue>(
     () => ({
       cart,
+      catalog,
       cartCount: cart.reduce((sum, line) => sum + line.quantity, 0),
       hydrated,
       addToCart,
       updateQuantity,
       removeFromCart,
+      upgradeToCombo,
       clearCart,
       saveOrder,
       notify,
@@ -159,7 +182,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       openCart,
       closeCart,
     }),
-    [cart, hydrated, addToCart, updateQuantity, removeFromCart, clearCart, saveOrder, notify, cartOpen, openCart, closeCart],
+    [cart, catalog, hydrated, addToCart, updateQuantity, removeFromCart, upgradeToCombo, clearCart, saveOrder, notify, cartOpen, openCart, closeCart],
   );
 
   return (

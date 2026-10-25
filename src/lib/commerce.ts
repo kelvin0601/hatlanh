@@ -9,6 +9,13 @@ export interface CartLine {
   product?: Product;
 }
 
+export interface ComboRecommendation {
+  combo: Product;
+  regularTotal: number;
+  savings: number;
+  components: Array<{ product: Product; quantity: number }>;
+}
+
 export interface CheckoutCustomer {
   name: string;
   phone: string;
@@ -74,6 +81,25 @@ export function calculateOrder(items: OrderItem[]) {
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shippingFee = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
   return { subtotal, shippingFee, total: subtotal + shippingFee };
+}
+
+export function getComboRecommendations(lines: CartLine[], catalog: Product[]): ComboRecommendation[] {
+  const cartProductIds = new Set(lines.filter((line) => line.quantity > 0).map((line) => line.productId));
+  const productsById = new Map(catalog.map((product) => [product.id, product]));
+
+  return catalog.flatMap((combo) => {
+    if (combo.type !== "combo" || cartProductIds.has(combo.id)) return [];
+    const components = combo.comboItems.flatMap((item) => {
+      const product = productsById.get(item.productId);
+      return product ? [{ product, quantity: item.quantity }] : [];
+    });
+    if (components.length !== combo.comboItems.length) return [];
+    if (!components.some(({ product }) => cartProductIds.has(product.id))) return [];
+    const regularTotal = components.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+    const savings = regularTotal - combo.price;
+    if (savings <= 0) return [];
+    return [{ combo, regularTotal, savings, components }];
+  }).sort((left, right) => right.savings - left.savings);
 }
 
 export function getPaymentLabel(method: PaymentMethod) {

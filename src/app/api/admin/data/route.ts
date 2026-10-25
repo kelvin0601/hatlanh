@@ -12,6 +12,7 @@ import {
   productSlugExists,
   productCategoryExists,
   productIngredientsExist,
+  validateProductCombo,
   articleSlugExists,
 } from "@/lib/admin-store";
 import type { AdminPermission } from "@/lib/admin-permissions";
@@ -44,6 +45,7 @@ function text(value: unknown, max = 2000) {
 function parseProduct(value: unknown): Omit<Product, "id"> | null {
   if (typeof value !== "object" || value === null) return null;
   const item = value as Record<string, unknown>;
+  const type = item.type === "combo" ? "combo" : "single";
   const slug = text(item.slug, 100);
   const name = text(item.name, 120);
   const shortName = text(item.shortName, 60);
@@ -56,8 +58,21 @@ function parseProduct(value: unknown): Omit<Product, "id"> | null {
   const storage = text(item.storage, 400);
   const price = Number(item.price);
   const ingredients = Array.isArray(item.ingredients) ? item.ingredients.map((ingredient) => text(ingredient, 60)).filter(Boolean).slice(0, 30) : [];
+  const comboItems = Array.isArray(item.comboItems)
+    ? item.comboItems.map((entry) => {
+      if (typeof entry !== "object" || entry === null) return null;
+      const comboItem = entry as Record<string, unknown>;
+      const productId = Number(comboItem.productId);
+      const quantity = Number(comboItem.quantity);
+      return Number.isInteger(productId) && productId > 0 && Number.isInteger(quantity) && quantity >= 1 && quantity <= 20
+        ? { productId, quantity }
+        : null;
+    }).filter((entry): entry is { productId: number; quantity: number } => entry !== null)
+    : [];
   if (!SLUG_PATTERN.test(slug) || name.length < 2 || !shortName || !isProductCategory(category) || !weight || !description || !isAllowedImageUrl(image) || !imageAlt || !usage || !storage || !Number.isInteger(price) || price < 1000 || ingredients.length === 0) return null;
-  return { slug, name, shortName, category, weight, price, description, image, imageAlt, ingredients, usage, storage };
+  if (type === "single" && comboItems.length > 0) return null;
+  if (type === "combo" && comboItems.length < 2) return null;
+  return { type, comboItems, slug, name, shortName, category, weight, price, description, image, imageAlt, ingredients, usage, storage };
 }
 
 function parseArticle(value: unknown): Article | null {
@@ -117,6 +132,7 @@ export async function POST(request: Request) {
       if (!data) throw new Error("Thông tin sản phẩm chưa hợp lệ.");
       if (!await productCategoryExists(data.category)) throw new Error("Danh mục sản phẩm không tồn tại.");
       if (!await productIngredientsExist(data.ingredients)) throw new Error("Có nguyên liệu chưa tồn tại trong danh sách quản lý.");
+      await validateProductCombo(data);
       if (await productSlugExists(data.slug)) throw new Error("Slug sản phẩm đã tồn tại.");
       const product = await createProduct(data);
       revalidatePublicContent(resource, product.slug);
@@ -151,6 +167,7 @@ export async function PATCH(request: Request) {
       if (!data) throw new Error("Thông tin sản phẩm chưa hợp lệ.");
       if (!await productCategoryExists(data.category)) throw new Error("Danh mục sản phẩm không tồn tại.");
       if (!await productIngredientsExist(data.ingredients)) throw new Error("Có nguyên liệu chưa tồn tại trong danh sách quản lý.");
+      await validateProductCombo(data, id);
       if (await productSlugExists(data.slug, id)) throw new Error("Slug sản phẩm đã tồn tại.");
       const product = await updateProduct(id, data);
       revalidatePublicContent(resource, product.slug);

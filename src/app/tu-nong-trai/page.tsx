@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { BadgeCheck, Leaf, PackageCheck, ShieldCheck, Sprout } from "lucide-react";
 import { ButtonLink } from "@/components/ui/ButtonLink";
+import { DotCarousel } from "@/components/ui/DotCarousel";
 import { getSitePageContent } from "@/lib/site-content-store";
 
 export const metadata: Metadata = {
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
 const container = { width: "min(calc(100% - 2 * var(--page-gutter)), var(--container-max))" };
 const benefitIcons = [Sprout, PackageCheck, Leaf, ShieldCheck, BadgeCheck];
 type GalleryImage = { url: string; alt: string };
+type ProcessStep = { number: string; title: string; body: string; image: string; imageAlt: string };
 
 function parseGallery(value: string): GalleryImage[] {
   try {
@@ -20,6 +22,10 @@ function parseGallery(value: string): GalleryImage[] {
   } catch {
     return [];
   }
+}
+
+function ProcessCard({ step }: { step: ProcessStep }) {
+  return <article className="group relative flex h-full flex-col rounded-[18px] border border-forest/8 bg-white/65 p-3 shadow-[0_10px_30px_rgba(47,66,48,0.06)] transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-[0_16px_36px_rgba(47,66,48,0.12)]"><span className="relative z-10 mb-3 grid h-10 w-10 place-items-center rounded-full border border-wheat/40 bg-[#fff8eb] text-[13px] font-bold text-[#a85828] shadow-sm">{step.number}</span><div className="relative aspect-[16/10] overflow-hidden rounded-[13px] bg-sand"><Image src={step.image} alt={step.imageAlt} fill sizes="(max-width: 767px) 84vw, (max-width: 1023px) 50vw, 320px" className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" /></div><div className="flex flex-1 flex-col px-1 pb-1 pt-4"><h3 className="whitespace-pre-line text-[16px] font-semibold leading-[1.3] text-ink">{step.title}</h3><p className="mt-2 text-[13px] leading-[1.55] text-muted">{step.body}</p></div></article>;
 }
 
 export default async function FarmPage() {
@@ -70,9 +76,15 @@ export default async function FarmPage() {
             </div>
           </div>
 
-          <div className="relative mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+          <div className="mt-8 md:hidden">
+            <DotCarousel label="Các bước trong quy trình sản xuất">
+              {steps.map((step, index) => <div key={step.number} role="group" aria-roledescription="slide" aria-label={`${index + 1} / ${steps.length}`} className="min-w-0 shrink-0 grow-0 basis-[88%] pl-5"><ProcessCard step={step} /></div>)}
+            </DotCarousel>
+          </div>
+
+          <div className="relative mt-8 hidden gap-4 md:grid md:grid-cols-2 lg:grid-cols-4 lg:gap-5">
             <div aria-hidden="true" className="absolute left-[8%] right-[8%] top-5 hidden border-t border-dashed border-wheat/60 lg:block" />
-            {steps.map((step) => <article key={step.number} className="group relative flex h-full flex-col rounded-[18px] border border-forest/8 bg-white/65 p-3 shadow-[0_10px_30px_rgba(47,66,48,0.06)] transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-[0_16px_36px_rgba(47,66,48,0.12)]"><span className="relative z-10 mb-3 grid h-10 w-10 place-items-center rounded-full border border-wheat/40 bg-[#fff8eb] text-[13px] font-bold text-[#a85828] shadow-sm">{step.number}</span><div className="relative aspect-[16/10] overflow-hidden rounded-[13px] bg-sand"><Image src={step.image} alt={step.imageAlt} fill sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 320px" className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" /></div><div className="flex flex-1 flex-col px-1 pb-1 pt-4"><h3 className="whitespace-pre-line text-[16px] font-semibold leading-[1.3] text-ink">{step.title}</h3><p className="mt-2 text-[13px] leading-[1.55] text-muted">{step.body}</p></div></article>)}
+            {steps.map((step) => <ProcessCard key={step.number} step={step} />)}
           </div>
         </div>
       </section>

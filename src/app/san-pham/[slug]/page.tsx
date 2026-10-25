@@ -49,6 +49,12 @@ export default async function ProductDetailPage({
   const product = await getStoreProductBySlug(slug);
   if (!product) notFound();
   const catalog = await getStoreProducts();
+  const comboComponents = product.type === "combo"
+    ? product.comboItems.flatMap((item) => {
+      const component = catalog.find((candidate) => candidate.id === item.productId);
+      return component ? [{ product: component, quantity: item.quantity }] : [];
+    })
+    : [];
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -130,6 +136,7 @@ export default async function ProductDetailPage({
               </div>
 
               <div className="border-t border-border pt-6 flex flex-col gap-5">
+                {comboComponents.length > 0 ? <div><h2 className="mb-3 text-[17px] font-semibold text-ink">Combo bao gồm</h2><div className="grid gap-2 sm:grid-cols-2">{comboComponents.map(({ product: component, quantity }) => <Link key={component.id} href={`/san-pham/${component.slug}`} className="flex items-center gap-3 rounded-[12px] border border-border bg-paper p-2.5 transition-colors hover:border-sage"><span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-[9px] bg-sand"><Image src={component.image} alt="" fill sizes="48px" className="object-cover" /></span><span className="min-w-0 flex-1"><span className="block line-clamp-1 text-[13px] font-semibold text-ink">{component.name}</span><span className="text-[12px] text-muted">{quantity} × {component.weight}</span></span></Link>)}</div></div> : null}
                 <div>
                   <h2 className="text-ink font-semibold text-[17px] mb-2">Thành phần</h2>
                   <ul className="flex flex-wrap gap-2">

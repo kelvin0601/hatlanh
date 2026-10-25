@@ -27,7 +27,7 @@
   --container-max: 1320px;
   --page-gutter: clamp(20px, 4vw, 64px);
   --section-space: clamp(64px, 9vw, 144px);
-  --header-height: 80px;
+  --header-height: 64px;
   --hero-space: calc(var(--section-space) * 0.8);
   --text-section-title: clamp(2.25rem, 4.5vw, 3.25rem);
   --shadow-soft: 0 12px 36px rgba(33, 55, 40, 0.08);
@@ -95,7 +95,11 @@
     box-shadow: none;
   }
 
-  button, a, input, textarea, select {
+  button,
+  a,
+  input,
+  textarea,
+  select {
     touch-action: manipulation;
   }
 }
@@ -155,10 +159,11 @@ body:has(.admin-root) {
   pointer-events: none;
   transition:
     transform var(--panel-close-dur) var(--panel-ease),
-    opacity   var(--panel-close-dur) var(--panel-ease),
-    filter    var(--panel-close-dur) var(--panel-ease);
+    opacity var(--panel-close-dur) var(--panel-ease),
+    filter var(--panel-close-dur) var(--panel-ease);
   will-change: transform, opacity, filter;
 }
+
 .t-panel-slide[data-open="true"] {
   transform: translateY(0);
   opacity: 1;
@@ -166,8 +171,8 @@ body:has(.admin-root) {
   pointer-events: auto;
   transition:
     transform var(--panel-open-dur) var(--panel-ease),
-    opacity   var(--panel-open-dur) var(--panel-ease),
-    filter    var(--panel-open-dur) var(--panel-ease);
+    opacity var(--panel-open-dur) var(--panel-ease),
+    filter var(--panel-open-dur) var(--panel-ease);
 }
 
 .cart-drawer-shell {
@@ -182,7 +187,9 @@ body:has(.admin-root) {
 }
 
 @keyframes farm-gallery-scroll {
-  to { transform: translateX(-50%); }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 .farm-gallery-marquee {
@@ -198,14 +205,63 @@ body:has(.admin-root) {
   animation-play-state: paused;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .t-panel-slide { transition: none !important; }
-  .cart-drawer-shell { transition: none !important; }
-  .farm-gallery-marquee { animation: none !important; }
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-group(page-content) {
+  animation-duration: 220ms;
+  animation-timing-function: ease-out;
+}
+
+::view-transition-old(.page-crossfade) {
+  animation: 120ms ease-in both page-fade-out;
+}
+
+::view-transition-new(.page-crossfade) {
+  animation: 200ms ease-out 35ms both page-fade-in;
+}
+
+@keyframes page-fade-out {
+  to {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  .t-panel-slide {
+    transition: none !important;
+  }
+
+  .cart-drawer-shell {
+    transition: none !important;
+  }
+
+  .farm-gallery-marquee {
+    animation: none !important;
+  }
+
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
     scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;

@@ -5,16 +5,17 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { ArrowRight, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { useShop } from "@/components/commerce/ShopProvider";
+import { ComboRecommendations } from "@/components/commerce/ComboRecommendations";
 import { calculateOrder, resolveCart } from "@/lib/commerce";
 import { formatPrice } from "@/lib/products";
 
 const FOCUSABLE = "a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex='-1'])";
 
 export function CartDrawer() {
-  const { cart, cartCount, cartOpen, closeCart, updateQuantity, removeFromCart } = useShop();
+  const { cart, catalog, cartCount, cartOpen, closeCart, updateQuantity, removeFromCart } = useShop();
   const panelRef = useRef<HTMLElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
-  const items = resolveCart(cart);
+  const items = resolveCart(cart, catalog);
   const totals = calculateOrder(items);
 
   useEffect(() => {
@@ -110,6 +111,7 @@ export function CartDrawer() {
                     </div>
                   </article>
                 ))}
+                <ComboRecommendations compact />
               </div>
 
               <footer className="border-t border-border bg-cream/70 px-4 py-4 sm:px-6">

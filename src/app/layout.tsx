@@ -5,6 +5,8 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { Footer } from "@/components/layout/Footer";
 import { ShopProvider } from "@/components/commerce/ShopProvider";
 import { CartDrawer } from "@/components/commerce/CartDrawer";
+import { PageTransition } from "@/components/layout/PageTransition";
+import { getStoreProducts } from "@/lib/admin-store";
 
 const lora = Lora({
   variable: "--font-display",
@@ -47,18 +49,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const catalog = await getStoreProducts();
   return (
     <html
       lang="vi"
       className={`${lora.variable} ${beVietnamPro.variable} antialiased`}
     >
       <body className="min-h-dvh flex flex-col">
-        <ShopProvider>
+        <ShopProvider catalog={catalog}>
           <a href="#main-content" className="fixed left-3 top-3 z-[120] -translate-y-20 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-white focus:translate-y-0">Bỏ qua điều hướng</a>
           <SiteHeader />
           <CartDrawer />
-          <main id="main-content" className="flex-1">{children}</main>
+          <main id="main-content" className="flex-1"><PageTransition>{children}</PageTransition></main>
           <Footer />
         </ShopProvider>
       </body>

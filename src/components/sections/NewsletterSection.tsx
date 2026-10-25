@@ -19,7 +19,7 @@ export function NewsletterSection({ content }: { content: SiteContent }) {
               {content.newsletterEyebrow}
             </p>
             <h2
-              className="text-ink leading-[1.13] tracking-[-0.025em] font-medium mb-2"
+              className="text-ink leading-[1.13] tracking-[-0.025em] font-medium mb-2 "
               style={{
                 fontFamily: "var(--font-display)",
                 fontSize: "clamp(1.5rem, 3vw, 2rem)",

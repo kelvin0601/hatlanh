@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useRef, useState, type FormEvent } from "react";
 import { ArrowLeft, Building2, Check, LoaderCircle, LockKeyhole, PackageCheck, WalletCards } from "lucide-react";
 import { useShop } from "@/components/commerce/ShopProvider";
+import { ComboRecommendations } from "@/components/commerce/ComboRecommendations";
 import { calculateOrder, resolveCart, type CheckoutCustomer, type Order, type PaymentMethod } from "@/lib/commerce";
 import { formatPrice } from "@/lib/products";
 
@@ -13,8 +14,8 @@ const fieldClassName = "h-[52px] rounded-[12px] border border-border bg-cream px
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { cart, hydrated, clearCart, saveOrder } = useShop();
-  const items = resolveCart(cart);
+  const { cart, catalog, hydrated, clearCart, saveOrder } = useShop();
+  const items = resolveCart(cart, catalog);
   const totals = calculateOrder(items);
   const [form, setForm] = useState<CheckoutCustomer>({ name: "", phone: "", email: "", address: "", city: "", note: "" });
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
@@ -152,6 +153,7 @@ export default function CheckoutPage() {
                 </div>
               ))}
             </div>
+            <ComboRecommendations limit={1} />
             <div className="flex flex-col gap-3 border-y border-border py-4 text-[15px]">
               <div className="flex justify-between"><span className="text-body">Tạm tính</span><span className="font-medium text-ink">{formatPrice(totals.subtotal)}</span></div>
               <div className="flex justify-between"><span className="text-body">Vận chuyển</span><span className={totals.shippingFee === 0 ? "font-medium text-forest" : "text-ink"}>{totals.shippingFee === 0 ? "Miễn phí" : formatPrice(totals.shippingFee)}</span></div>
